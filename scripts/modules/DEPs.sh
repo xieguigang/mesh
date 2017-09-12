@@ -37,7 +37,8 @@ eggHTS /heatmap /in "$workspace/T.test/" /out "$workspace/heatmap/"
 eggHTS /venn /in "$workspace/T.test/" /out "$workspace/venn/"
 
 # 将中间数据移动到functional_analysis文件夹之中，准备进行富集分析
-# 其实富集分析只需要有基因编号列表即可，但是因为KEGG绘制代谢网络图和蛋白互作网络的绘制还需要结合蛋白的表达量的信息，所以在这里就直接将中间文件给移动过去了
+# 其实富集分析只需要有基因编号列表即可，但是因为KEGG绘制代谢网络图和蛋白互作网络的绘制
+# 还需要结合蛋白的表达量的信息，所以在这里就直接将中间文件给移动过去了
 functional_analysis=`dirname "$workspace"`;
 functional_analysis="$functional_analysis/4. functional_analysis/";
 
