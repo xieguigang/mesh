@@ -24,7 +24,11 @@ function reference() {
 }
 
 # 首先获取得到原始数据excel文件的路径
-project=$1;
+   project=$1;
+# 以及iTraq实验的标记对用户样品名称的映射
+   symbols=$2;
+# 最后则是实验的分组设计
+sampleInfo=$3;
 
 # 初始化文件目录
 # 得到$project文件的父目录作为工作区目录进行初始化
@@ -39,4 +43,13 @@ contents_mkdir "$work";
 extract_matrix=`reference "extract_matrix.sh"`;
 
 # 执行脚本命令进行matrix的释出和原始数据文件在工作区内的移动
-extract_matrix "$project";
+# $project 提供原始数据的来源excel文件
+# $symbols 提供itraq标记到用户样品标签的映射信息，用于提取出矩阵信息
+# $sampleInfo 则是根据分组信息进行矩阵的分割与解析，从而能够进入下一个流程进行DEPs的计算分析
+extract_matrix "$project" "$symbols" "$sampleInfo";
+
+DEPs=`reference "DEPs.sh"`;
+
+# 进行DEP的计算分析以及火山图，文氏图和热图的绘制操作
+# $sampleInfo文件的所用是遍历其中的分组信息，分别对每一个分组的计算结果创建自己的工作区文件夹
+DEPs "$work/3. DEPs/matrix/" "$sampleInfo";
