@@ -2,11 +2,11 @@
 # Variables: $1=='alpha'; $2=='beta'; $3=='gamma'
 # The variable $0 is the script's name. The total number of arguments is stored in $#. The variables $@ and $* return all the arguments.
 
-# ½Å±¾Ê¹ÓÃ·½·¨£º
+# è„šæœ¬ä½¿ç”¨æ–¹æ³•ï¼š
 #
 # ./contents_mkdir.sh directory_path
 #
-# Ê¹ÓÃÕâ¸ö½Å±¾½øĞĞµ°°××é·ÖÎöÄÚÈİÎÄ¼ş¼ĞµÄ³õÊ¼»¯²Ù×÷
+# ä½¿ç”¨è¿™ä¸ªè„šæœ¬è¿›è¡Œè›‹ç™½ç»„åˆ†æå†…å®¹æ–‡ä»¶å¤¹çš„åˆå§‹åŒ–æ“ä½œ
 #
 root=$1
 
