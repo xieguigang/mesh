@@ -49,3 +49,5 @@ eggHTS /iTraq.matrix.split /in "$csv" /sampleInfo "$sampleInfo" /out "$wd/3. DEP
 
 # 删除中间文件
 rm -f "$csv"
+
+exit 0;
