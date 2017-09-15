@@ -4,10 +4,6 @@
 # 所以二者是公用同一套数据分析脚本的
 #
 
-# 脚本调用
-#
-# iTraq.sh ./project.xlsx ./sampleInfo.csv ./design.csv ./symbols.csv
-
 # 进行命令行的帮助信息的提示
 if [ $# -gt 0 ]; then
 
@@ -58,9 +54,24 @@ else
     fi
 
     if [allhave = false] then
-        # 用户没有输入任何命令行参数，则需要在这里打印出帮助信息
 
-        
+        # 用户没有输入任何命令行参数，则需要在这里打印出帮助信息
+        # 脚本调用
+        #
+        # iTraq.sh ./project.xlsx ./sampleInfo.csv ./design.csv ./symbols.csv
+
+        echo "Usage:\n";
+        echo "\n";
+        echo "    iTraq.sh ./project.xlsx ./sampleInfo.csv ./design.csv ./symbols.csv\n";
+        echo "\n";
+        echo "\n";
+        echo "Where:\n";
+        echo "\n";
+        echo "             - project.xlsx:   Excel file that contains the iTraq source value\n";
+        echo "             - sampleInfo.csv: Contains the information about the relationship between the sample label and experiment group,\n";
+        echo "                               and the definition of the plot color and shapes in the legend.\n";
+        echp "             - design.csv:     The experiment design that using for analysis of the DEPs result\n";
+        echo "             - symbols.csv:    Relationsips between the iTraq label and the user sample label\n";
 
         exit 1;
     fi   
