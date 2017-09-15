@@ -122,3 +122,11 @@ DEPs=`reference "DEPs.sh"`;
 # 进行DEP的计算分析以及火山图，文氏图和热图的绘制操作
 # $sampleInfo文件的所用是遍历其中的分组信息，分别对每一个分组的计算结果创建自己的工作区文件夹
 DEPs "$work/3. DEPs/matrix/" "$sampleInfo";
+
+enrichment=`reference "enrichment.sh"`;
+
+network=`reference "string_network.sh"`;
+
+
+# 调用自动报告脚本进行iTraq蛋白组数据分析报告的自动生成
+./auto_reports/iTraq.sh "$work" "$sampleInfo" "$design" "$symbols"
