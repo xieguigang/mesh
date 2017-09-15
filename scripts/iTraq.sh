@@ -1,6 +1,71 @@
+#!/bin/bash
+
 # 对于iTraq和TMT这两种类型的蛋白组实验而言，数据处理的方式都是几乎一样的，
 # 所以二者是公用同一套数据分析脚本的
 #
+
+# 脚本调用
+#
+# iTraq.sh ./project.xlsx ./sampleInfo.csv ./design.csv ./symbols.csv
+
+# 进行命令行的帮助信息的提示
+if [ $# -gt 0 ]; then
+
+    # 取出所输入的文件路径
+
+    # ===================================================================================
+    # 脚本输入数据：
+    #
+    # 1. project.xlsx   iTraq质谱实验结果数据文件
+    # 2. sampleInfo.csv 包括实验组别与样品之间的已对应关系的定义，以及一些绘图操作的时候的颜色和形状的定义
+    # 3. design.csv     比对试验设计，用于生成log2FC值以进行差异表达蛋白的计算
+    # 4. symbols.csv    将iTraq的标记替换为样品的标签
+    # ===================================================================================
+
+    # 1. 首先获取得到原始数据excel文件的路径
+       project=$1;
+    # 2. 实验的分组设计
+    sampleInfo=$2;
+    # 3. 进行比对实验设计得到差异表达蛋白所需要的比对信息
+        design=$3;
+    # 4. 以及iTraq实验的标记对用户样品名称的映射
+       symbols=$4;
+
+else
+    # 用户没有输入任何命令行参数，则需要在这里打印出帮助信息
+
+    # 但是在当前的工作区之中发现了所需求的文件，则会直接进入下一步
+    allHave=true;
+    
+    project="./project.xlsx";    
+    if [ !(-f "$project") ] then
+        allHave=false;
+    fi
+
+    sampleInfo="./sampleInfo.xlsx";    
+    if [ !(-f "$sampleInfo") ] then
+        allHave=false;
+    fi
+
+    design="./design.xlsx";    
+    if [ !(-f "$design") ] then
+        allHave=false;
+    fi
+
+    symbols="./symbols.xlsx";    
+    if [ !(-f "$symbols") ] then
+        allHave=false;
+    fi
+
+    if [allhave = false] then
+        # 用户没有输入任何命令行参数，则需要在这里打印出帮助信息
+
+        
+
+        exit 1;
+    fi   
+fi
+
 
 # 因为考虑到需要引用其他的公用的bash脚本模块
 # 所以在这里需要得到当前的脚本所处的文件夹的绝对路径
@@ -22,13 +87,6 @@ function reference() {
     local file_name=$1;
     echo "$getwd/modules/$file_name";
 }
-
-# 首先获取得到原始数据excel文件的路径
-   project=$1;
-# 以及iTraq实验的标记对用户样品名称的映射
-   symbols=$2;
-# 最后则是实验的分组设计
-sampleInfo=$3;
 
 # 初始化文件目录
 # 得到$project文件的父目录作为工作区目录进行初始化
