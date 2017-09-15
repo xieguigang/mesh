@@ -70,7 +70,7 @@ else
         echo "             - project.xlsx:   Excel file that contains the iTraq source value\n";
         echo "             - sampleInfo.csv: Contains the information about the relationship between the sample label and experiment group,\n";
         echo "                               and the definition of the plot color and shapes in the legend.\n";
-        echp "             - design.csv:     The experiment design that using for analysis of the DEPs result\n";
+        echo "             - design.csv:     The experiment design that using for analysis of the DEPs result\n";
         echo "             - symbols.csv:    Relationsips between the iTraq label and the user sample label\n";
 
         exit 1;
