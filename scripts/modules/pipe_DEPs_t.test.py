@@ -16,7 +16,6 @@ from os.path import isfile, join;
 # 4. 之后将差异蛋白计算结果进行热图的绘制以及相应的kmeans聚类分析
 # 5. 之后再进行文氏图的绘制操作
 
-
 def pipeline(matrix_directory, log2FC_level=1.5, pvalue=0.05, FDR=0.05):
     '''
     @param matrix_directory: 保存有来自于上一部分模块调用得到的样品表达数据的矩阵csv文件的文件夹
