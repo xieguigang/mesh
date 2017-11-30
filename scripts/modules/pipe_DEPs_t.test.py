@@ -43,14 +43,18 @@ def pipeline(matrix_directory, log2FC_level=1.5, pvalue=0.05, FDR=0.05):
     os.makedirs(out_directory, exist_ok=True);
 
     t_test(
-        log2FC_level=log2FC_level,
-        pvalue=pvalue,
-        FDR=FDR,
-        matrix_directory=matrix_directory,
-        out_directory=out_directory);
+        log2FC_level     = log2FC_level,
+        pvalue           = pvalue,
+        FDR              = FDR,
+        matrix_directory = matrix_directory,
+        out_directory    = out_directory);
+    volcano_plot(
+		t_test_directory = out_directory, 
+		log2FC_level     = log2FC_level, 
+		pvalue           = pvalue);
+    heatmap_kmeans(t_test_directory = out_directory);
 
     return;
-
 
 def t_test(matrix_directory, out_directory, log2FC_level=1.5, pvalue=0.05, FDR=0.05):
     '''
@@ -116,5 +120,12 @@ def volcano_plot(t_test_directory, log2FC_level = 1.5, pvalue = 0.05):
 
         # 运行计算分析程序
         subprocess.check_output(CLI, shell=True);
+
+    return;
+
+def heatmap_kmeans(t_test_directory):
+
+
+    CLI_template = "";
 
     return;
