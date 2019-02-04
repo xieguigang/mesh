@@ -36,19 +36,19 @@ eggHTS.exe /protein.annotations /uniprot "uniprot.XML" /accession.ID /iTraq /lis
 
 所生成的总蛋白功能注释表格的表头说明：
 
-| 表头     | 说明                        |
-|----------|----------------------------|
+| 表头     | 说明                          |
+|----------|-------------------------------|
 | ID       | 蛋白在原始数据表格之中的编号  |
-| geneName | 对应的基因名称               |
+| geneName | 对应的基因名称                |
 | ORF      | 基因编码这个蛋白质的ORF的名称 |
-| Entrez   | NCBI编号             |
-| fullName | 蛋白的全称              |
+| Entrez   | NCBI编号                      |
+| fullName | 蛋白的全称                    |
 | uniprot  | 蛋白在UniProt数据库之中的编号 |
-| GO       | GO功能注释结果列表         |
-| EC       | 酶分类信息              |
-| KO       | KEGG直系同源分析信息       |
-| pfam     | 蛋白质二级结构信息          |
-| organism | 物种来源               |
+| GO       | GO功能注释结果列表            |
+| EC       | 酶分类信息                    |
+| KO       | KEGG直系同源分析信息          |
+| pfam     | 蛋白质二级结构信息            |
+| organism | 物种来源                      |
 
 <div style="page-break-after: always;"></div>
 

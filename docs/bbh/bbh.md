@@ -14,13 +14,13 @@
 
 可以在Taxonomy之中往上一级分类查找或者在同一级分类之中查找出模式生物，得到了模式生物之中，从Uniprot数据库之中下载该模式生物的所有的蛋白质序列备用。同样的，将待分析的物种的蛋白组结果之中的蛋白编号列表取出来，利用Uniprot数据库之中的批量编号映射工具获取得到相对应的蛋白序列备用。
 
-<div style="page-break-after: always;"/>
+<div style="page-break-after: always;"></div>
 
 ![](./images/3.select_taxonomy.PNG)
 
 ![](./images/4.download_fasta.png)
 
-<div style="page-break-after: always;"/>
+<div style="page-break-after: always;"></div>
 
 ### BBH双向blastp比对
 
