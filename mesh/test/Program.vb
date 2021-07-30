@@ -1,5 +1,9 @@
-﻿Imports mesh
+﻿Imports System.Drawing
+Imports mesh
+Imports Microsoft.VisualBasic.Imaging.Drawing2D
 Imports Microsoft.VisualBasic.Imaging.Drawing2D.Math2D.MarchingSquares
+Imports Microsoft.VisualBasic.Imaging.Drawing3D
+Imports Microsoft.VisualBasic.Imaging.Driver
 
 Public Module Program
 
@@ -17,7 +21,13 @@ Public Module Program
             New MeasureData(91, 132, 770)
         }
 
-        Dim meshData = Modeller.CreateMesh3D(data).ToArray
+        Dim meshData As Surface() = Modeller.CreateMesh3D(data).ToArray
+
+        g.SetDriver(Drivers.SVG)
+
+        Dim view As New Camera() With {.screen = New Size(1400, 1200)}
+
+        Call Modeller.Draw(meshData, view).Save("./test.svg")
 
         Pause()
     End Sub
