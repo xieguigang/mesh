@@ -2,6 +2,7 @@
 Imports Microsoft.VisualBasic.Imaging.Drawing2D
 Imports Microsoft.VisualBasic.Imaging.Drawing2D.Math2D.MarchingSquares
 Imports Microsoft.VisualBasic.Imaging.Drawing3D
+Imports Microsoft.VisualBasic.Imaging.Drawing3D.Models.Isometric
 Imports Microsoft.VisualBasic.Imaging.Driver
 Imports Microsoft.VisualBasic.Imaging.Math2D
 Imports Microsoft.VisualBasic.Linq
@@ -56,15 +57,19 @@ Public NotInheritable Class Modeller
         Next
     End Function
 
-    Public Shared Function Draw(mesh As IEnumerable(Of Surface), camera As Camera) As GraphicsData
+    Public Shared Function Draw(mesh As IEnumerable(Of Surface), screen As Size) As GraphicsData
+        Dim isometric As New IsometricEngine
+
+        For Each poly As Surface In mesh
+            isometric.Add(New Path3D(poly), DirectCast(poly.brush, SolidBrush).Color)
+        Next
+
         Return g.GraphicsPlots(
-            size:=camera.screen,
+            size:=screen,
             padding:=New Padding,
             bg:="white",
             plotAPI:=Sub(ByRef gr, canvas)
-                         For Each tr As Surface In camera.Rotate(mesh)
-                             Call tr.Draw(gr, camera)
-                         Next
+                         Call isometric.Draw(gr)
                      End Sub)
     End Function
 End Class

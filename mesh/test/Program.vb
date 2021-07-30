@@ -23,11 +23,11 @@ Public Module Program
 
         Dim meshData As Surface() = Modeller.CreateMesh3D(data).ToArray
 
-        g.SetDriver(Drivers.SVG)
+
 
         Dim view As New Camera() With {.screen = New Size(1400, 1200)}
 
-        Call Modeller.Draw(meshData, view).Save("./test.svg")
+        Call Modeller.Draw(meshData, New Size(1400, 1200)).Save("./test.png")
 
         Pause()
     End Sub
