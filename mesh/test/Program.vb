@@ -27,7 +27,7 @@ Public Module Program
 
         Dim view As New Camera() With {.screen = New Size(1400, 1200)}
 
-        Call Modeller.Draw(meshData, New Size(1400, 1200)).Save("./test.png")
+        Call Modeller.Draw(meshData, New Size(16000, 8000)).Save("./test.png")
 
         Pause()
     End Sub
