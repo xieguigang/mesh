@@ -57,7 +57,6 @@ Public Class Canvas
 
     Public Sub New()
         Call InitializeComponent()
-        Call BuildSolid(Vendor_3mf.IO.Open("G:\sciBASIC\gr\build_3DEngine\models\WOW_rthas the Lich King1.3mf"))
     End Sub
 
     Public Sub BuildSolid(project As Project)
