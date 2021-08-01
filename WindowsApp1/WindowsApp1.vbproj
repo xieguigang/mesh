@@ -167,6 +167,10 @@
       <Project>{ccd693c3-ee09-473a-8344-26e05b373394}</Project>
       <Name>Landscape</Name>
     </ProjectReference>
+    <ProjectReference Include="..\mesh\mesh.vbproj">
+      <Project>{7987EDEB-2891-4343-BF9C-8BC9380E3A17}</Project>
+      <Name>mesh</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

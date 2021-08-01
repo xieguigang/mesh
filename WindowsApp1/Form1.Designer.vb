@@ -27,9 +27,10 @@ Partial Class Form1
         '
         'ElementHost1
         '
-        Me.ElementHost1.Location = New System.Drawing.Point(138, 89)
+        Me.ElementHost1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.ElementHost1.Location = New System.Drawing.Point(0, 0)
         Me.ElementHost1.Name = "ElementHost1"
-        Me.ElementHost1.Size = New System.Drawing.Size(704, 445)
+        Me.ElementHost1.Size = New System.Drawing.Size(931, 627)
         Me.ElementHost1.TabIndex = 0
         Me.ElementHost1.Text = "ElementHost1"
         Me.ElementHost1.Child = Nothing

@@ -1,43 +1,43 @@
 ﻿#Region "Microsoft.VisualBasic::a7b2ff8821b7ceed5e2583048ebacbb5, gr\Landscape\WPF\Canvas.xaml.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    ' Class Canvas
-    ' 
-    '     Constructor: (+1 Overloads) Sub New
-    '     Sub: BuildSolid, Button_Click, Grid_MouseDown, Grid_MouseMove, Grid_MouseUp
-    '          Grid_MouseWheel
-    ' 
-    ' /********************************************************************************/
+' Class Canvas
+' 
+'     Constructor: (+1 Overloads) Sub New
+'     Sub: BuildSolid, Button_Click, Grid_MouseDown, Grid_MouseMove, Grid_MouseUp
+'          Grid_MouseWheel
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -46,6 +46,7 @@ Imports System.Windows.Input
 Imports System.Windows.Media
 Imports System.Windows.Media.Media3D
 Imports Microsoft.VisualBasic.Imaging.Drawing3D.Landscape.Vendor_3mf
+Imports Microsoft.VisualBasic.Language
 Imports stdNum = System.Math
 Imports Vertex = System.Windows.Media.Media3D.Point3D
 
@@ -86,8 +87,38 @@ Public Class Canvas
         Next
     End Sub
 
+    Public Sub BuildMesh(surface As IEnumerable(Of Surface))
+        ' Define 3D mesh object
+        Dim mesh As New MeshGeometry3D()
+        Dim allList = surface.ToArray
+
+        For Each S As Surface In allList
+            For Each v As Point3D In S
+                Call mesh.Positions.Add(New Vertex(v.X, v.Y, v.Z))
+            Next
+        Next
+
+        Dim i As i32 = Scan0
+
+        For Each t In allList
+            Call mesh.TriangleIndices.Add(++i)
+            Call mesh.TriangleIndices.Add(++i)
+            Call mesh.TriangleIndices.Add(++i)
+        Next
+
+        ' Geometry creation
+        Dim geometry As New GeometryModel3D(
+            mesh,
+            New DiffuseMaterial(Brushes.YellowGreen)) With {
+            .Transform = New Transform3DGroup()
+        }
+
+        Call __geometry.Add(geometry)
+        Call group.Children.Add(geometry)
+    End Sub
+
     Private Sub Grid_MouseWheel(sender As Object, e As MouseWheelEventArgs)
-        camera.Position = New Vertex(camera.Position.X, camera.Position.Y, camera.Position.Z - e.Delta / 250.0)
+        camera.Position = New Vertex(camera.Position.X, camera.Position.Y, camera.Position.Z - e.Delta / 10)
     End Sub
 
     Private Sub Button_Click(sender As Object, e As RoutedEventArgs)
