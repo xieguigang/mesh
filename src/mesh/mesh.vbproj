@@ -32,4 +32,6 @@
     <ProjectReference Include="..\..\..\mzkit\src\mzmath\ms2_math-core\mzmath-netcore5.vbproj" />
   </ItemGroup>
 
+  <Import Project="..\..\..\mzkit\Rscript\Library\mzkit.interopArguments\mzkit.interopArguments.projitems" Label="Shared" />
+
 </Project>
