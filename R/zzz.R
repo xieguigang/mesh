@@ -2,6 +2,8 @@
 #' metabolomics analysis pipeline
 imports "mesh" from "Mesh";
 
+require(mzkit);
+
 const .onLoad = function() {
     
 }
