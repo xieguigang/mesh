@@ -25,8 +25,11 @@
     <ProjectReference Include="..\..\..\GCModeller\src\R-sharp\R#\Rsharp-netcore5.vbproj" />
     <ProjectReference Include="..\..\..\GCModeller\src\runtime\sciBASIC#\Data_science\Mathematica\Math\Math.Statistics\stats-netcore5.vbproj" />
     <ProjectReference Include="..\..\..\GCModeller\src\runtime\sciBASIC#\Data_science\Mathematica\Math\Math\Math.NET5.vbproj" />
+    <ProjectReference Include="..\..\..\GCModeller\src\runtime\sciBASIC#\Data_science\Mathematica\SignalProcessing\SignalProcessing\signalprocessing-netcore5.vbproj" />
     <ProjectReference Include="..\..\..\GCModeller\src\runtime\sciBASIC#\Microsoft.VisualBasic.Core\src\Core.vbproj" />
     <ProjectReference Include="..\..\..\GCModeller\src\workbench\modules\ExperimentDesigner\designer-netcore5.vbproj" />
+    <ProjectReference Include="..\..\..\mzkit\src\metadb\Chemoinformatics\chemoinformatics-netcore5.vbproj" />
+    <ProjectReference Include="..\..\..\mzkit\src\mzmath\ms2_math-core\mzmath-netcore5.vbproj" />
   </ItemGroup>
 
 </Project>

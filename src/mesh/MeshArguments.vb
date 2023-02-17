@@ -1,4 +1,8 @@
-﻿Public Class MeshArguments
+﻿Imports BioNovoGene.BioDeep.Chemoinformatics
+Imports SMRUCC.genomics.Analysis.HTS.DataFrame
+Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
+
+Public Class MeshArguments
 
     ''' <summary>
     ''' m/z mass range to generates the ions
@@ -11,11 +15,16 @@
     ''' [sample observes]
     ''' </summary>
     ''' <returns></returns>
-    Public Property sampleLabels As String()
+    Public Property sampleinfo As SampleInfo()
     ''' <summary>
     ''' Ion numbers in the generated expression matrix
     ''' </summary>
     ''' <returns></returns>
     Public Property featureSize As Integer = 10000
+    Public Property metabolites As MetaboliteAnnotation()
+
+    Public Function CreateMatrix() As Matrix
+        Return New Generator(Me).GetExpressionMatrix
+    End Function
 
 End Class
