@@ -10,7 +10,7 @@ Imports SMRUCC.Rsharp.Runtime.Vectorization
 Imports REnv = SMRUCC.Rsharp.Runtime
 
 ''' <summary>
-''' MSdata expression matrix simulator for test metabolomics analysis pipeline
+''' MSdata expression matrix simulator for metabolomics analysis pipeline development and test.
 ''' </summary>
 <Package("mesh")>
 <RTypeExport("mesh", GetType(MeshArguments))>
