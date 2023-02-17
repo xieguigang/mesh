@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Generate the metabolomics expression matrix object</title>
+    <title>as.mzPack</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <style rel="stylesheet" type="text/css">
@@ -143,31 +143,29 @@
 
         <table style="width: 100%;">
             <tr>
-                <td>expr1 {mesh}</td>
+                <td>as.mzPack {mesh}</td>
                 <td style="text-align: right;">R Documentation</td>
             </tr>
         </table>
 
-        <h2>Generate the metabolomics expression matrix object</h2>
+        <h2>as.mzPack</h2>
 
         <h3>Description</h3>
 
-        
+        as.mzPack
 
         <h3>Usage</h3>
 
         <div style="width: 100%; padding-left: 3%; color: black;">
-            <pre><code class='language-R' style="color: black; font-weight:normal;"><strong>expr1</strong>(<i>mesh</i>,
-    <i>mzpack</i> = <span style='color: blue;'>FALSE</span>);</code></pre>
+            <pre><code class='language-R' style="color: black; font-weight:normal;"><strong>as.mzPack</strong>(<i>expr1</i>,
+    <i>q</i> = 0.7,
+    <i>rt.range</i> = [1,840]);</code></pre>
         </div>
 
         <h3>Arguments</h3>
 
         <table>
             
-<dt>mesh</dt>
-<dd><p><p>-</p></p></dd>
-
         </table>
 
 
@@ -178,7 +176,7 @@
 
         <h3>Value</h3>
 
-        this function returns data object in these one of the listed data types: <a href="/clr/SMRUCC/genomics/Analysis/HTS/DataFrame/Matrix.html">Matrix</a>, <a href="/clr/BioNovoGene/Analytical/MassSpectrometry/Assembly/mzPack.html">mzPack</a>.
+        this function returns data object of type <a href="/clr/BioNovoGene/Analytical/MassSpectrometry/Assembly/mzPack.html">mzPack</a>.
 
         <hr />
         <div style="text-align: center;">[Package <em>mesh</em> version 1.0.0.0 <a
