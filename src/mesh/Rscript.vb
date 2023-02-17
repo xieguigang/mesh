@@ -31,7 +31,7 @@ Public Module Rscript
     ''' <returns></returns>
     <ExportAPI("mesh")>
     <RApiReturn(GetType(MeshArguments))>
-    Public Function meshArgs(<RRawVectorArgument>
+    Public Function meshArgs(<RRawVectorArgument(GetType(Double))>
                              Optional mass_range As Object = "50,1200",
                              Optional feature_size As Integer = 10000,
                              Optional mzdiff As Double = 0.005,
