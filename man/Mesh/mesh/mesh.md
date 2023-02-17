@@ -1,6 +1,6 @@
 # mesh
 
-MSdata expression matrix simulator for test metabolomics analysis pipeline
+MSdata expression matrix simulator for metabolomics analysis pipeline development and test.
 
 + [mesh](mesh/mesh.1) Create a mesh argument for run metabolomics expression matrix simulation
 + [samples](mesh/samples.1) Set sample labels and group labels information
