@@ -68,15 +68,19 @@ Public Class Generator
         ' get mean of each ion feature in current sample_group
         Dim mean_of_group As Vector = MathGamma.gamma(Vector.rand(args.featureSize) * 120)
         ' various of each ion features in current sample_group
-        Dim various As Double() = MathGamma.gamma(Vector.rand(args.featureSize) * 5)
+        Dim various As Double() = MathGamma.gamma(Vector.rand(args.featureSize) * 20)
         Dim delta As Vector
+        Dim sample_data As Vector
+        Dim zero As Vector = Vector.Zero
 
         For Each sample As SampleInfo In sample_group
             delta = various _
                 .Select(Function(x) randf.NextDouble(-x, x)) _
                 .AsVector
+            sample_data = mean_of_group + delta
+            sample_data(sample_data < 0) = zero
 
-            Yield mean_of_group + delta
+            Yield sample_data
         Next
     End Function
 
