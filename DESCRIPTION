@@ -1,0 +1,10 @@
+Package: mesh
+Type: Package
+Title: R environment talks with R# environment
+Version: 0.1.0
+Author: xieguigang <xie.guigang@gcmodeller.org>
+Maintainer: xieguigang <xie.guigang@gcmodeller.org>
+Description: R environment talks with R# environment
+License: MIT
+Encoding: UTF-8
+LazyData: true
