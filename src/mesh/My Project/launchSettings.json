@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "mesh": {
+      "commandName": "Project",
+      "commandLineArgs": "E:\\mesh\\test\\test.R --attach E:\\mesh"
+    },
+    "Profile 1": {
+      "commandName": "Executable",
+      "executablePath": "E:\\GCModeller\\src\\R-sharp\\App\\net6.0\\R#.exe",
+      "commandLineArgs": "E:\\mesh\\test\\test.R --attach E:\\mesh"
+    }
+  }
+}
