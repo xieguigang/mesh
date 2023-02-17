@@ -1,6 +1,12 @@
 
+Imports System.Runtime.CompilerServices
+Imports BioNovoGene.Analytical.MassSpectrometry.Assembly
+Imports BioNovoGene.Analytical.MassSpectrometry.Assembly.mzData.mzWebCache
 Imports BioNovoGene.BioDeep.Chemoinformatics
 Imports Microsoft.VisualBasic.CommandLine.Reflection
+Imports Microsoft.VisualBasic.DataStorage.netCDF.DataVector
+Imports Microsoft.VisualBasic.Math.LinearAlgebra
+Imports Microsoft.VisualBasic.Math.Quantile
 Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports SMRUCC.genomics.Analysis.HTS.DataFrame
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
@@ -85,8 +91,59 @@ Public Module Rscript
     ''' <param name="mesh"></param>
     ''' <returns></returns>
     <ExportAPI("expr1")>
-    <RApiReturn(GetType(Matrix))>
-    Public Function expr0(mesh As MeshArguments) As Object
-        Return New Generator(mesh).GetExpressionMatrix
+    <RApiReturn(GetType(Matrix), GetType(mzPack))>
+    Public Function expr0(mesh As MeshArguments, Optional mzpack As Boolean = False) As Object
+        If mzpack Then
+            Return New Generator(mesh).GetExpressionMatrix.toMzPack
+        Else
+            Return New Generator(mesh).GetExpressionMatrix
+        End If
+    End Function
+
+    <ExportAPI("as.mzPack")>
+    <Extension>
+    Public Function toMzPack(expr1 As Matrix,
+                             Optional q As Double = 0.7,
+                             <RRawVectorArgument(GetType(Double))>
+                             Optional rt_range As Object = "1,840",
+                             Optional env As Environment = Nothing) As mzPack
+
+        ' transpose to sample_id in rows and mz
+        ' ions in column features
+        Dim scans As Matrix = expr1.T
+        Dim mz As Vector = scans.sampleID _
+            .Select(Function(id) Val(id.Match("\d+(\.\d+)?"))) _
+            .ToArray
+        Dim scan1 As New List(Of ScanMS1)
+        Dim dt As Double = CLRVector.asNumeric(rt_range).Range.Length / scans.expression.Length
+        Dim t As Double = 0
+
+        For Each sample As DataFrameRow In scans.expression
+            Dim quantile = sample.experiments.GKQuantile
+            Dim cut As Double = quantile.Query(q)
+            Dim expression As New Vector(sample.experiments)
+            Dim i = expression > cut
+            Dim mzi = mz(i)
+            Dim into = expression(i)
+
+            t += dt
+            scan1.Add(New ScanMS1 With {
+                .mz = mzi.ToArray,
+                .BPC = into.Max,
+                .into = into.ToArray,
+                .rt = t,
+                .TIC = expression.Sum,
+                .scan_id = $"[MS1] {sample.geneID}"
+            })
+        Next
+
+        Return New mzPack With {
+            .Application = FileApplicationClass.LCMS,
+            .metadata = New Dictionary(Of String, String) From {
+                {"source", expr1.tag}
+            },
+            .source = expr1.tag,
+            .MS = scan1.ToArray
+        }
     End Function
 End Module
