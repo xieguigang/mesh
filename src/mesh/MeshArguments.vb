@@ -11,6 +11,7 @@ Public Class MeshArguments
     ''' </summary>
     ''' <returns></returns>
     Public Property massrange As Double() = {50, 1200}
+    Public Property massdiff As Double = 0.005
     ''' <summary>
     ''' A vector of the sample labels to generates the matrix
     ''' [sample observes]
@@ -30,7 +31,8 @@ Public Class MeshArguments
     ''' <returns></returns>
     Public Property metabolites As MetaboliteAnnotation()
     ''' <summary>
-    ''' adducts for evaluate ion m/z features from the <see cref="MetaboliteAnnotation.ExactMass"/> of the metabolites
+    ''' adducts for evaluate ion m/z features from the <see cref="MetaboliteAnnotation.ExactMass"/> 
+    ''' of the metabolites
     ''' </summary>
     ''' <returns></returns>
     Public Property adducts As MzCalculator()
