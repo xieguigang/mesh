@@ -1,6 +1,7 @@
 require(mesh);
 require(GCModeller);
 require(mzkit);
+require(graphics);
 
 imports "mzweb" from "mzkit";
 
@@ -8,8 +9,9 @@ let mesh = mesh(
     mass.range = [50, 2000], 
     feature.size = 2500, 
     mzdiff = 0.005);
+let ratser = as.raster(readImage(`${@dir}/../../docs/Visualize-Metabolic-Process-at-the-Single-Cell-Level.png`)); 
 
-samples.spatial(mesh, x = 1:256, y = 1:200);
+samples.raster(mesh, raster);
 
 let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE);
 

@@ -11,11 +11,24 @@
 declare namespace mesh {
    module as {
       /**
-        * @param q default value Is ``0.7``.
-        * @param rt_range default value Is ``[1,840]``.
-        * @param env default value Is ``null``.
+       * Cast the data expression matrix as the mzkit mzpack object
+       * 
+       * 
+        * @param expr1 -
+        * @param q -
+        * 
+        * + default value Is ``0.7``.
+        * @param rt_range -
+        * 
+        * + default value Is ``[1,840]``.
+        * @param spatial Current expression matrix is a spatial matrix?
+        * 
+        * + default value Is ``false``.
+        * @param env -
+        * 
+        * + default value Is ``null``.
       */
-      function mzPack(expr1: object, q?: number, rt_range?: any, env?: object): object;
+      function mzPack(expr1: object, q?: number, rt_range?: any, spatial?: boolean, env?: object): object;
    }
    /**
     * Generate the metabolomics expression matrix object
@@ -24,11 +37,13 @@ declare namespace mesh {
      * @param mesh -
      * @param mzpack 
      * + default value Is ``false``.
+     * @param spatial 
+     * + default value Is ``false``.
      * @return this function returns a GCModeller expression matrix object or 
      *  MZKit mzpack data object based on the parameter option of 
      *  **`mzpack`**.
    */
-   function expr1(mesh: object, mzpack?: boolean): object|object;
+   function expr1(mesh: object, mzpack?: boolean, spatial?: boolean): object|object;
    /**
     * Create a mesh argument for run metabolomics expression matrix simulation
     * 
@@ -65,6 +80,10 @@ declare namespace mesh {
    */
    function metabolites(mesh: object, metabolites: object, adducts: any, env?: object): object;
    module samples {
+      /**
+        * @param env default value Is ``null``.
+      */
+      function raster(mesh: object, raster: object, env?: object): any;
       /**
        * Set spatial id
        * 
