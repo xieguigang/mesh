@@ -86,6 +86,8 @@ Public Module Rscript
                                       <RRawVectorArgument> y As Object,
                                       <RRawVectorArgument>
                                       Optional z As Object = Nothing,
+                                      <RRawVectorArgument>
+                                      Optional kernel As Object = Nothing,
                                       Optional env As Environment = Nothing) As Object
 
         Dim xi As Integer() = CLRVector.asInteger(x)
@@ -129,6 +131,10 @@ Public Module Rscript
                             }
                         End Function) _
                 .ToArray
+        End If
+
+        If Not kernel Is Nothing Then
+            mesh.kernel = CLRVector.asNumeric(kernel)
         End If
 
         Return mesh.setSamples(sampleinfo, env)
