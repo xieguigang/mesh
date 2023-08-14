@@ -239,6 +239,11 @@ Public Module Rscript
             Dim into = expression(i)
 
             t += dt
+
+            If mzi.Length = 0 Then
+                Continue For
+            End If
+
             scan1.Add(New ScanMS1 With {
                 .mz = mzi.ToArray,
                 .BPC = into.Max,
