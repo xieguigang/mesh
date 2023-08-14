@@ -4,7 +4,6 @@ Imports BioNovoGene.Analytical.MassSpectrometry.Assembly
 Imports BioNovoGene.Analytical.MassSpectrometry.Assembly.mzData.mzWebCache
 Imports BioNovoGene.BioDeep.Chemoinformatics
 Imports Microsoft.VisualBasic.CommandLine.Reflection
-Imports Microsoft.VisualBasic.DataStorage.netCDF.DataVector
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports Microsoft.VisualBasic.Math.Quantile
 Imports Microsoft.VisualBasic.Scripting.MetaData
@@ -55,6 +54,7 @@ Public Module Rscript
     ''' <returns></returns>
     <ExportAPI("samples")>
     <RApiReturn(GetType(MeshArguments))>
+    <Extension>
     Public Function setSamples(mesh As MeshArguments,
                                <RRawVectorArgument>
                                sampleinfo As Object,
@@ -66,10 +66,80 @@ Public Module Rscript
     End Function
 
     ''' <summary>
+    ''' Set spatial id
+    ''' </summary>
+    ''' <param name="mesh"></param>
+    ''' <param name="x"></param>
+    ''' <param name="y"></param>
+    ''' <param name="env"></param>
+    ''' <returns></returns>
+    <ExportAPI("samples.spatial")>
+    Public Function setSpatialSamples(mesh As MeshArguments,
+                                      <RRawVectorArgument> x As Object,
+                                      <RRawVectorArgument> y As Object,
+                                      <RRawVectorArgument>
+                                      Optional z As Object = Nothing,
+                                      Optional env As Environment = Nothing) As Object
+
+        Dim xi As Integer() = CLRVector.asInteger(x)
+        Dim yi As Integer() = CLRVector.asInteger(y)
+        Dim zi As Integer() = CLRVector.asInteger(z)
+        Dim sampleinfo As SampleInfo()
+
+        If xi.Length <> yi.Length Then
+            Return Internal.debug.stop("invalid spatial x,y", env)
+        End If
+
+        If zi.IsNullOrEmpty Then
+            sampleinfo = xi _
+                .Select(Function(xj, j)
+                            Return New SampleInfo With {
+                                .ID = $"{xj},{yi(j)}",
+                                .batch = 1,
+                                .color = "black",
+                                .injectionOrder = j + 1,
+                                .sample_info = "spatial_2D",
+                                .sample_name = .ID,
+                                .shape = "rect"
+                            }
+                        End Function) _
+                .ToArray
+        Else
+            If xi.Length <> zi.Length Then
+                Return Internal.debug.stop("invalid spatial x,y,z", env)
+            End If
+
+            sampleinfo = xi _
+                .Select(Function(xj, j)
+                            Return New SampleInfo With {
+                                .batch = 1,
+                                .color = "black",
+                                .ID = $"{xj},{yi(j)},{zi(j)}",
+                                .injectionOrder = j + 1,
+                                .sample_info = "spatial_3D",
+                                .sample_name = .ID,
+                                .shape = "rect"
+                            }
+                        End Function) _
+                .ToArray
+        End If
+
+        Return mesh.setSamples(sampleinfo, env)
+    End Function
+
+    ''' <summary>
     ''' Set metabolite features
     ''' </summary>
     ''' <param name="mesh"></param>
-    ''' <param name="metabolites"></param>
+    ''' <param name="metabolites">
+    ''' A collection of the metabolite annotation data model that contains 
+    ''' the basic annotation metadata: 
+    ''' 
+    ''' 1. id, 
+    ''' 2. name, 
+    ''' 3. exact mass, 
+    ''' 4. and formula data
+    ''' </param>
     ''' <param name="adducts"></param>
     ''' <param name="env"></param>
     ''' <returns></returns>
@@ -89,7 +159,11 @@ Public Module Rscript
     ''' Generate the metabolomics expression matrix object
     ''' </summary>
     ''' <param name="mesh"></param>
-    ''' <returns></returns>
+    ''' <returns>
+    ''' this function returns a GCModeller expression matrix object or 
+    ''' MZKit mzpack data object based on the parameter option of 
+    ''' <paramref name="mzpack"/>.
+    ''' </returns>
     <ExportAPI("expr1")>
     <RApiReturn(GetType(Matrix), GetType(mzPack))>
     Public Function expr0(mesh As MeshArguments, Optional mzpack As Boolean = False) As Object
