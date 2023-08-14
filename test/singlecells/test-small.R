@@ -22,4 +22,4 @@ samples.raster(mesh, raster);
 
 let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE);
 
-write.mzPack(pack, file = `demo_singlecells.mzPack`, version = 2);
+write.mzPack(pack, file = `demo_singlecells-small.mzPack`, version = 2);
