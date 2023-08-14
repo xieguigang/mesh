@@ -4,6 +4,7 @@ Imports BioNovoGene.Analytical.MassSpectrometry.Assembly
 Imports BioNovoGene.Analytical.MassSpectrometry.Assembly.mzData.mzWebCache
 Imports BioNovoGene.BioDeep.Chemoinformatics
 Imports Microsoft.VisualBasic.CommandLine.Reflection
+Imports Microsoft.VisualBasic.Imaging.Drawing2D.HeatMap
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports Microsoft.VisualBasic.Math.Quantile
@@ -126,6 +127,11 @@ Public Module Rscript
         End If
 
         Return mesh.setSamples(sampleinfo, env)
+    End Function
+
+    <ExportAPI("samples.raster")>
+    Public Function samplesRaster(mesh As MeshArguments, raster As RasterScaler) As Object
+
     End Function
 
     ''' <summary>
