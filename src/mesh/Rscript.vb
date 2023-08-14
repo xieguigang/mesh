@@ -76,6 +76,7 @@ Public Module Rscript
     ''' <param name="env"></param>
     ''' <returns></returns>
     <ExportAPI("samples.spatial")>
+    <Extension>
     Public Function setSpatialSamples(mesh As MeshArguments,
                                       <RRawVectorArgument> x As Object,
                                       <RRawVectorArgument> y As Object,
@@ -130,8 +131,16 @@ Public Module Rscript
     End Function
 
     <ExportAPI("samples.raster")>
-    Public Function samplesRaster(mesh As MeshArguments, raster As RasterScaler) As Object
+    Public Function samplesRaster(mesh As MeshArguments, raster As RasterScaler, Optional env As Environment = Nothing) As Object
+        Dim pixels As PixelData() = raster.GetRasterData.ToArray
+        Dim x As Integer() = pixels.Select(Function(p) p.X).ToArray
+        Dim y As Integer() = pixels.Select(Function(p) p.Y).ToArray
+        Dim kernels As Double() = pixels.Select(Function(p) p.Scale).ToArray
 
+        mesh.setSpatialSamples(x, y, env:=env)
+        mesh.kernel = kernels
+
+        Return mesh
     End Function
 
     ''' <summary>

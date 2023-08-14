@@ -19,6 +19,11 @@ Public Class MeshArguments
     ''' <returns></returns>
     Public Property sampleinfo As SampleInfo()
     ''' <summary>
+    ''' the expression level kernel, the value is corresponding with the <see cref="sampleinfo"/>
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property kernel As Double()
+    ''' <summary>
     ''' Ion numbers in the generated expression matrix
     ''' </summary>
     ''' <returns></returns>

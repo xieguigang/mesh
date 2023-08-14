@@ -16,9 +16,10 @@ Public Class Generator
     ReadOnly ions As List(Of Double)
     ReadOnly mass_range As DoubleRange
     ReadOnly sample_groups As Dictionary(Of String, SampleInfo())
+    ReadOnly renderKernelProfiles As Boolean
 
     Sub New(args As MeshArguments)
-        Me.sample_groups = args.sampleinfo _
+        Me.sample_groups = renderKernels(args) _
             .GroupBy(Function(sample) sample.sample_info) _
             .ToDictionary(Function(group) group.Key,
                           Function(group)
@@ -27,8 +28,27 @@ Public Class Generator
         Me.args = args
         Me.ions = New List(Of Double)
         Me.mass_range = New DoubleRange(args.massrange)
+        Me.renderKernelProfiles = Not args.kernel.IsNullOrEmpty
     End Sub
 
+    Private Shared Function renderKernels(mesh As MeshArguments) As IEnumerable(Of SampleInfo)
+        If mesh.kernel.IsNullOrEmpty Then
+            Return mesh.sampleinfo
+        Else
+            Return mesh.sampleinfo _
+                .Select(Function(si, i)
+                            si = New SampleInfo(si)
+                            si.color = mesh.kernel(i).ToString
+                            Return si
+                        End Function) _
+                .ToArray
+        End If
+    End Function
+
+    ''' <summary>
+    ''' creates the expression value based on the arguments
+    ''' </summary>
+    ''' <returns></returns>
     Public Function GetExpressionMatrix() As Matrix
         Call ions.Clear()
 
@@ -72,12 +92,20 @@ Public Class Generator
         Dim delta As Vector
         Dim sample_data As Vector
         Dim zero As Vector = Vector.Zero
+        Dim kernel As Double
 
         For Each sample As SampleInfo In sample_group
             delta = various _
                 .Select(Function(x) randf.NextDouble(-x, x)) _
                 .AsVector
-            sample_data = mean_of_group + delta
+
+            If renderKernelProfiles Then
+                kernel = Val(sample.color)
+            Else
+                kernel = 1
+            End If
+
+            sample_data = mean_of_group * kernel + delta
             sample_data(sample_data < 0) = zero
 
             Yield sample_data
