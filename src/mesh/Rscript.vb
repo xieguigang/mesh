@@ -143,7 +143,10 @@ Public Module Rscript
         Dim pixels As PixelData() = raster.GetRasterData.ToArray
         Dim x As Integer() = pixels.Select(Function(p) p.X).ToArray
         Dim y As Integer() = pixels.Select(Function(p) p.Y).ToArray
-        Dim kernels As Double() = pixels.Select(Function(p) p.Scale).ToArray
+        Dim kernels As Vector = pixels.Select(Function(p) p.Scale).AsVector
+
+        kernels = kernels / kernels.Max
+        kernels(kernels < 1) = Vector.Zero
 
         mesh.setSpatialSamples(x, y, env:=env)
         mesh.kernel = kernels
