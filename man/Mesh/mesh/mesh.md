@@ -4,6 +4,7 @@ MSdata expression matrix simulator for metabolomics analysis pipeline developmen
 
 + [mesh](mesh/mesh.1) Create a mesh argument for run metabolomics expression matrix simulation
 + [samples](mesh/samples.1) Set sample labels and group labels information
++ [samples.spatial](mesh/samples.spatial.1) Set spatial id
 + [metabolites](mesh/metabolites.1) Set metabolite features
 + [expr1](mesh/expr1.1) Generate the metabolomics expression matrix object
 + [as.mzPack](mesh/as.mzPack.1) 

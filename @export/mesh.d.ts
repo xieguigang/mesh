@@ -24,6 +24,9 @@ declare namespace mesh {
      * @param mesh -
      * @param mzpack 
      * + default value Is ``false``.
+     * @return this function returns a GCModeller expression matrix object or 
+     *  MZKit mzpack data object based on the parameter option of 
+     *  **`mzpack`**.
    */
    function expr1(mesh: object, mzpack?: boolean): object|object;
    /**
@@ -48,22 +51,33 @@ declare namespace mesh {
     * 
     * 
      * @param mesh -
-     * @param metabolites -
+     * @param metabolites A collection of the metabolite annotation data model that contains 
+     *  the basic annotation metadata: 
+     *  
+     *  1. id, 
+     *  2. name, 
+     *  3. exact mass, 
+     *  4. and formula data
      * @param adducts -
      * @param env -
      * 
      * + default value Is ``null``.
    */
    function metabolites(mesh: object, metabolites: object, adducts: any, env?: object): object;
-   /**
-    * Set sample labels and group labels information
-    * 
-    * 
-     * @param mesh -
-     * @param sampleinfo -
-     * @param env -
-     * 
-     * + default value Is ``null``.
-   */
-   function samples(mesh: object, sampleinfo: any, env?: object): object;
+   module samples {
+      /**
+       * Set spatial id
+       * 
+       * 
+        * @param mesh -
+        * @param x -
+        * @param y -
+        * @param z 
+        * + default value Is ``null``.
+        * @param env -
+        * 
+        * + default value Is ``null``.
+      */
+      function spatial(mesh: object, x: any, y: any, z?: any, env?: object): any;
+   }
 }
