@@ -56,11 +56,13 @@ declare namespace mesh {
      * + default value Is ``10000``.
      * @param mzdiff 
      * + default value Is ``0.005``.
+     * @param intensity_range 
+     * + default value Is ``[1000,1E+35]``.
      * @param env -
      * 
      * + default value Is ``null``.
    */
-   function mesh(mass_range?: any, feature_size?: object, mzdiff?: number, env?: object): object;
+   function mesh(mass_range?: any, feature_size?: object, mzdiff?: number, intensity_range?: any, env?: object): object;
    /**
     * Set metabolite features
     * 
