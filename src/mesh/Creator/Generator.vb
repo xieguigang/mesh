@@ -2,6 +2,7 @@
 Imports BioNovoGene.Analytical.MassSpectrometry.Math.Ms1.PrecursorType
 Imports BioNovoGene.BioDeep.Chemoinformatics
 Imports Microsoft.VisualBasic.ComponentModel.Ranges.Model
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.Distributions
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
@@ -95,13 +96,18 @@ Public Class Generator
         Dim sample_data As Vector
         Dim zero As Vector = Vector.Zero
         Dim kernel As Double
+        Dim d As Integer = sample_group.Length / 20
+        Dim i As i32 = 0
+        Dim t0 As Date = Now
 
         For Each sample As SampleInfo In sample_group
             delta = various _
                 .Select(Function(x) randf.NextDouble(-x, x)) _
                 .AsVector
 
-            Call VBDebugger.EchoLine($"  * {sample.sample_name}...")
+            If ++i Mod d = 0 Then
+                Call VBDebugger.EchoLine($"  * [{((i / d) * 100).ToString("F2")}%, {(Now - t0).FormatTime}] {sample.sample_name}...")
+            End If
 
             If renderKernelProfiles Then
                 kernel = Val(sample.color)
