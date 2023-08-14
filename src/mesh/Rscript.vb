@@ -4,6 +4,7 @@ Imports BioNovoGene.Analytical.MassSpectrometry.Assembly
 Imports BioNovoGene.Analytical.MassSpectrometry.Assembly.mzData.mzWebCache
 Imports BioNovoGene.BioDeep.Chemoinformatics
 Imports Microsoft.VisualBasic.CommandLine.Reflection
+Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports Microsoft.VisualBasic.Math.Quantile
 Imports Microsoft.VisualBasic.Scripting.MetaData
@@ -166,9 +167,13 @@ Public Module Rscript
     ''' </returns>
     <ExportAPI("expr1")>
     <RApiReturn(GetType(Matrix), GetType(mzPack))>
-    Public Function expr0(mesh As MeshArguments, Optional mzpack As Boolean = False) As Object
+    Public Function expr0(mesh As MeshArguments,
+                          Optional mzpack As Boolean = False,
+                          Optional spatial As Boolean = False) As Object
         If mzpack Then
-            Return New Generator(mesh).GetExpressionMatrix.toMzPack
+            Return New Generator(mesh) _
+                .GetExpressionMatrix _
+                .toMzPack(spatial:=spatial)
         Else
             Return New Generator(mesh).GetExpressionMatrix
         End If
@@ -180,6 +185,7 @@ Public Module Rscript
                              Optional q As Double = 0.7,
                              <RRawVectorArgument(GetType(Double))>
                              Optional rt_range As Object = "1,840",
+                             Optional spatial As Boolean = False,
                              Optional env As Environment = Nothing) As mzPack
 
         ' transpose to sample_id in rows and mz
@@ -193,7 +199,7 @@ Public Module Rscript
         Dim t As Double = 0
 
         For Each sample As DataFrameRow In scans.expression
-            Dim quantile = sample.experiments.GKQuantile
+            Dim quantile As QuantileEstimationGK = sample.experiments.GKQuantile
             Dim cut As Double = quantile.Query(q)
             Dim expression As New Vector(sample.experiments)
             Dim i = expression > cut
@@ -207,12 +213,29 @@ Public Module Rscript
                 .into = into.ToArray,
                 .rt = t,
                 .TIC = expression.Sum,
-                .scan_id = $"[MS1] {sample.geneID}"
+                .scan_id = $"[MS1] {sample.geneID}, { .mz.Length} ions; total_ions={ .into.Sum}, basePeak={ .into.Max}, basePeak_m/z={ .mz(which.Max(.into))}"
             })
+
+            If spatial Then
+                Dim xyz As String() = sample.geneID.Split(","c)
+                Dim current As ScanMS1 = scan1.Last
+
+                current.meta = New Dictionary(Of String, String)
+                current.meta.Add("x", xyz(0))
+                current.meta.Add("y", xyz(1))
+
+                If xyz.Length > 2 Then
+                    current.meta.Add("z", xyz(2))
+                End If
+            End If
         Next
 
         Return New mzPack With {
-            .Application = FileApplicationClass.LCMS,
+            .Application = If(
+                spatial,
+                FileApplicationClass.MSImaging,
+                FileApplicationClass.LCMS
+            ),
             .metadata = New Dictionary(Of String, String) From {
                 {"source", expr1.tag}
             },
