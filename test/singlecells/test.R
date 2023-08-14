@@ -9,7 +9,11 @@ let mesh = mesh(
     mass.range = [50, 2000], 
     feature.size = 100, 
     mzdiff = 0.005);
-let raster = as.raster(readImage(`${@dir}/../../docs/docs\single-cells-have-their-own-defenses-against-pathogens3.jpg`)); 
+let raster = as.raster(readImage(`${@dir}/../../docs\Visualize-Metabolic-Process-at-the-Single-Cell-Level.png`)); 
+
+bitmap(file = "./raster1.png", size = [1920, 1080]);
+rasterHeatmap(raster);
+dev.off();
 
 samples.raster(mesh, raster);
 
