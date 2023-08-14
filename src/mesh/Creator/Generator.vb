@@ -106,7 +106,7 @@ Public Class Generator
                 .AsVector
 
             If ++i Mod d = 0 Then
-                Call VBDebugger.EchoLine($"  * [{((i / d) * 100).ToString("F2")}%, {(Now - t0).FormatTime}] {sample.sample_name}...")
+                Call VBDebugger.EchoLine($"  * [{((i / sample_group.Length) * 100).ToString("F2")}%, {(Now - t0).FormatTime}] {sample.sample_name}...")
             End If
 
             If renderKernelProfiles Then
