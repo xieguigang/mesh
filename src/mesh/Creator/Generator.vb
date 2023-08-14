@@ -89,17 +89,17 @@ Public Class Generator
 
     Private Iterator Function SampleMatrix(sample_group As SampleInfo()) As IEnumerable(Of Vector)
         ' get mean of each ion feature in current sample_group
-        Dim mean_of_group As Vector = MathGamma.gamma(Vector.rand(args.featureSize) * 100)
+        Dim mean_of_group As Vector = MathGamma.gamma(Vector.rand(args.featureSize) * 50)
         ' various of each ion features in current sample_group
         Dim various As Double() = MathGamma.gamma(Vector.rand(args.featureSize) * 20)
         Dim delta As Vector
         Dim sample_data As Vector
-        Dim zero As Vector = Vector.Zero
+        Dim one As Vector = Vector.Ones(1)
         Dim kernel As Double
         Dim d As Integer = sample_group.Length / 20
         Dim i As i32 = 0
         Dim t0 As Date = Now
-        Dim into_range As New DoubleRange(args.intensity_range)
+        Dim into_range As New DoubleRange(0, args.intensity_max)
 
         For Each sample As SampleInfo In sample_group
             delta = various _
@@ -117,15 +117,21 @@ Public Class Generator
             End If
 
             sample_data = mean_of_group * kernel + delta
-            sample_data(sample_data < 0) = zero
+            sample_data(sample_data < 1) = one
+            sample_data = sample_data.Log
+            sample_data(sample_data < 1) = Vector.Zero
 
             Dim sample_range As New DoubleRange(sample_data)
 
-            Yield sample_data _
+            sample_data = sample_data _
                 .Select(Function(si)
                             Return sample_range.ScaleMapping(si, into_range)
                         End Function) _
                 .AsVector
+
+            sample_data(sample_data < 1) = Vector.Zero
+
+            Yield sample_data
         Next
     End Function
 

@@ -16,7 +16,7 @@ Public Class MeshArguments
     ''' the intensity range conversion
     ''' </summary>
     ''' <returns></returns>
-    Public Property intensity_range As Double() = {10 ^ 3, 10 ^ 35}
+    Public Property intensity_max As Double = 10 ^ 15
 
     ''' <summary>
     ''' A vector of the sample labels to generates the matrix

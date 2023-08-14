@@ -56,13 +56,13 @@ declare namespace mesh {
      * + default value Is ``10000``.
      * @param mzdiff 
      * + default value Is ``0.005``.
-     * @param intensity_range 
-     * + default value Is ``[1000,1E+35]``.
+     * @param intensity_max 
+     * + default value Is ``1000000000000000``.
      * @param env -
      * 
      * + default value Is ``null``.
    */
-   function mesh(mass_range?: any, feature_size?: object, mzdiff?: number, intensity_range?: any, env?: object): object;
+   function mesh(mass_range?: any, feature_size?: object, mzdiff?: number, intensity_max?: number, env?: object): object;
    /**
     * Set metabolite features
     * 
@@ -95,10 +95,12 @@ declare namespace mesh {
         * @param y -
         * @param z 
         * + default value Is ``null``.
+        * @param kernel 
+        * + default value Is ``null``.
         * @param env -
         * 
         * + default value Is ``null``.
       */
-      function spatial(mesh: object, x: any, y: any, z?: any, env?: object): any;
+      function spatial(mesh: object, x: any, y: any, z?: any, kernel?: any, env?: object): any;
    }
 }
