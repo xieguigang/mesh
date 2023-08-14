@@ -28,7 +28,7 @@ Public Class Generator
                           End Function)
         Me.args = args
         Me.ions = New List(Of Double)
-        Me.mass_range = New DoubleRange(args.massrange)
+        Me.mass_range = New DoubleRange(args.mass_range)
         Me.renderKernelProfiles = Not args.kernel.IsNullOrEmpty
     End Sub
 
@@ -99,6 +99,7 @@ Public Class Generator
         Dim d As Integer = sample_group.Length / 20
         Dim i As i32 = 0
         Dim t0 As Date = Now
+        Dim into_range As New DoubleRange(args.intensity_range)
 
         For Each sample As SampleInfo In sample_group
             delta = various _
@@ -111,13 +112,20 @@ Public Class Generator
 
             If renderKernelProfiles Then
                 kernel = Val(sample.color)
-                mean_of_group = Vector.rand(args.featureSize) * kernel
+            Else
+                kernel = 1
             End If
 
-            sample_data = mean_of_group + delta
+            sample_data = mean_of_group * kernel + delta
             sample_data(sample_data < 0) = zero
 
-            Yield sample_data
+            Dim sample_range As New DoubleRange(sample_data)
+
+            Yield sample_data _
+                .Select(Function(si)
+                            Return sample_range.ScaleMapping(si, into_range)
+                        End Function) _
+                .AsVector
         Next
     End Function
 

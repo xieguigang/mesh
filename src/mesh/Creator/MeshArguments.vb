@@ -10,8 +10,14 @@ Public Class MeshArguments
     ''' [ion features]
     ''' </summary>
     ''' <returns></returns>
-    Public Property massrange As Double() = {50, 1200}
+    Public Property mass_range As Double() = {50, 1200}
     Public Property massdiff As Double = 0.005
+    ''' <summary>
+    ''' the intensity range conversion
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property intensity_range As Double() = {10 ^ 3, 10 ^ 35}
+
     ''' <summary>
     ''' A vector of the sample labels to generates the matrix
     ''' [sample observes]

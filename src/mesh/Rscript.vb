@@ -36,14 +36,18 @@ Public Module Rscript
                              Optional mass_range As Object = "50,1200",
                              Optional feature_size As Integer = 10000,
                              Optional mzdiff As Double = 0.005,
+                             <RRawVectorArgument(GetType(Double))>
+                             Optional intensity_range As Object = "1e3,1e35",
                              Optional env As Environment = Nothing) As MeshArguments
 
         Dim range As Double() = CLRVector.asNumeric(mass_range)
+        Dim into As Double() = CLRVector.asNumeric(intensity_range)
 
         Return New MeshArguments With {
-            .massrange = range,
+            .mass_range = range,
             .featureSize = feature_size,
-            .massdiff = mzdiff
+            .massdiff = mzdiff,
+            .intensity_range = into
         }
     End Function
 
