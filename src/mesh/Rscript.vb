@@ -179,6 +179,15 @@ Public Module Rscript
         End If
     End Function
 
+    ''' <summary>
+    ''' Cast the data expression matrix as the mzkit mzpack object
+    ''' </summary>
+    ''' <param name="expr1"></param>
+    ''' <param name="q"></param>
+    ''' <param name="rt_range"></param>
+    ''' <param name="spatial">Current expression matrix is a spatial matrix?</param>
+    ''' <param name="env"></param>
+    ''' <returns></returns>
     <ExportAPI("as.mzPack")>
     <Extension>
     Public Function toMzPack(expr1 As Matrix,

@@ -11,6 +11,6 @@ let mesh = mesh(
 
 samples.spatial(mesh, x = 1:256, y = 1:200);
 
-let pack = mesh::expr1(mesh, mzpack = TRUE);
+let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE);
 
 write.mzPack(pack, file = `${@dir}/demo_singlecells.mzPack`, version = 2);
