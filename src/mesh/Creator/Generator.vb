@@ -68,6 +68,8 @@ Public Class Generator
         Dim sample_data As New List(Of Double())
 
         For Each sample_group In sample_groups
+            Call VBDebugger.EchoLine($"Processing sample group: {sample_group.Key}...")
+
             sample_info.Add((sample_group.Key, sample_group.Value))
             sample_data.AddRange(SampleMatrix(sample_group.Value).Select(Function(v) v.ToArray))
         Next
@@ -99,13 +101,14 @@ Public Class Generator
                 .Select(Function(x) randf.NextDouble(-x, x)) _
                 .AsVector
 
+            Call VBDebugger.EchoLine($"  * {sample.sample_name}...")
+
             If renderKernelProfiles Then
                 kernel = Val(sample.color)
-            Else
-                kernel = 1
+                mean_of_group = Vector.rand(args.featureSize) * kernel
             End If
 
-            sample_data = mean_of_group * kernel + delta
+            sample_data = mean_of_group + delta
             sample_data(sample_data < 0) = zero
 
             Yield sample_data
