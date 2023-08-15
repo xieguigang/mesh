@@ -96,7 +96,7 @@ Public Class Generator
         Dim various As Double() = MathGamma.gamma(Vector.rand(args.featureSize) * v_factor)
         Dim delta As Vector
         Dim sample_data As Vector
-        Dim one As Vector = Vector.Ones(1)
+        Dim zero As Vector = Vector.Zero(1)
         Dim kernel As Double
         Dim d As Integer = sample_group.Length / 20
         Dim i As i32 = 0
@@ -118,9 +118,9 @@ Public Class Generator
             End If
 
             sample_data = mean_of_group * kernel + delta
-            sample_data(sample_data < 1) = one
-            sample_data = sample_data.Log
-            sample_data(sample_data < 1) = Vector.Zero
+            sample_data(sample_data < 10) = zero
+            ' sample_data = sample_data.Log
+            ' sample_data(sample_data < 1) = Vector.Zero
             sample_data = sample_data * args.intensity_max
 
             Yield sample_data
