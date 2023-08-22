@@ -54,7 +54,7 @@ Public Class SpatialGenerator : Inherits Generator
         kernel = (kernel / kernel.Max * 2).Exp
 
         For Each spot As SampleInfo In sample_group
-            Dim mu As Double = kernel(++i)
+            Dim mu As Double = kernel(CInt(i))
             Dim sigma As Double = randf.NextGaussian(mu:=std.Exp(Val(spot.color) / max))
             Dim sample_data As Vector = pnorm.ProbabilityDensity(x, mu, sigma)
             Dim various As Vector = MathGamma.gamma(Vector.rand(min:=-3, max:=3, args.featureSize) * v_factor) / 2.31
