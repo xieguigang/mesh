@@ -195,7 +195,7 @@ Public Module Rscript
         If mzpack Then
             Return New Generator(mesh) _
                 .GetExpressionMatrix _
-                .toMzPack(spatial:=spatial)
+                .toMzPack(spatial:=spatial, mesh:=mesh)
         Else
             Return New Generator(mesh).GetExpressionMatrix
         End If
@@ -280,6 +280,7 @@ Public Module Rscript
         If mzi.Length = 0 Then
             Return Nothing
         End If
+
         If sampleinfo.ContainsKey(sample.geneID) Then
             sample_data = sampleinfo(sample.geneID)
             scan_id = sample_data.sample_name
@@ -307,7 +308,7 @@ Public Module Rscript
                 s1.meta.Add("z", xyz(2))
             End If
         End If
-        If Not sample Is Nothing Then
+        If Not sample_data Is Nothing Then
             If s1.meta Is Nothing Then
                 s1.meta = New Dictionary(Of String, String)
             End If
