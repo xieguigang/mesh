@@ -46,6 +46,7 @@ Public Class Generator
         Dim ions As Double() = Me.ions.Clear().CreateIonFeatures().ToArray
         Dim sample_info As New List(Of (name As String, SampleInfo()))
         Dim sample_data As New List(Of Double())
+        Dim zero As Vector = Vector.Zero
 
         For Each sample_group In sample_groups
             Call VBDebugger.EchoLine("")
@@ -54,7 +55,11 @@ Public Class Generator
             Call VBDebugger.EchoLine("")
 
             sample_info.Add((sample_group.Key, sample_group.Value))
-            sample_data.AddRange(SampleMatrix(sample_group.Value).Select(Function(v) v.ToArray))
+
+            For Each v As Vector In SampleMatrix(sample_group.Value)
+                v(v.IsNaN) = zero
+                sample_data.Add(v.ToArray)
+            Next
         Next
 
         'For i As Integer = 0 To ions.Length - 1
