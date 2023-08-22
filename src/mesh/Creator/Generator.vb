@@ -75,7 +75,10 @@ Public Class Generator
         Dim sample_data As New List(Of Double())
 
         For Each sample_group In sample_groups
-            Call VBDebugger.EchoLine($"Processing sample group: {sample_group.Key}...")
+            Call VBDebugger.EchoLine("")
+            Call VBDebugger.EchoLine($" Processing sample group: {sample_group.Key}...")
+            Call VBDebugger.EchoLine($"    -> {sample_group.Value.Length} sample files...")
+            Call VBDebugger.EchoLine("")
 
             sample_info.Add((sample_group.Key, sample_group.Value))
             sample_data.AddRange(SampleMatrix(sample_group.Value).Select(Function(v) v.ToArray))
