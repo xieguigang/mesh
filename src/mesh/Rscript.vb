@@ -232,7 +232,7 @@ Public Module Rscript
         Dim t As Double = 0
         Dim sampleinfo As New Dictionary(Of String, SampleInfo)
         Dim current As ScanMS1
-        Dim d As Integer = scans.expression.Length / 20
+        Dim d As Integer = scans.expression.Length / 25
         Dim p As i32 = 0
 
         If Not mesh Is Nothing Then
