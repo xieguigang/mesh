@@ -122,6 +122,13 @@ Public Module Rscript
         Return mesh.setSamples(sampleinfo, env)
     End Function
 
+    ''' <summary>
+    ''' Create a spatial sample via the given raster matrix
+    ''' </summary>
+    ''' <param name="mesh"></param>
+    ''' <param name="raster"></param>
+    ''' <param name="env"></param>
+    ''' <returns></returns>
     <ExportAPI("samples.raster")>
     Public Function samplesRaster(mesh As MeshArguments, raster As RasterScaler, Optional env As Environment = Nothing) As Object
         Dim pixels As PixelData() = raster.GetRasterData.ToArray
