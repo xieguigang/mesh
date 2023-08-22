@@ -75,6 +75,9 @@ Public Module Rscript
     ''' <param name="mesh"></param>
     ''' <param name="x"></param>
     ''' <param name="y"></param>
+    ''' <param name="z">
+    ''' z axis of the spatial spot
+    ''' </param>
     ''' <param name="env"></param>
     ''' <returns></returns>
     <ExportAPI("samples.spatial")>
@@ -86,53 +89,34 @@ Public Module Rscript
                                       Optional z As Object = Nothing,
                                       <RRawVectorArgument>
                                       Optional kernel As Object = Nothing,
+                                      <RRawVectorArgument>
+                                      Optional group As Object = Nothing,
                                       Optional env As Environment = Nothing) As Object
 
         Dim xi As Integer() = CLRVector.asInteger(x)
         Dim yi As Integer() = CLRVector.asInteger(y)
         Dim zi As Integer() = CLRVector.asInteger(z)
         Dim sampleinfo As SampleInfo()
+        Dim labels As String() = CLRVector.asCharacter(group)
 
         If xi.Length <> yi.Length Then
             Return Internal.debug.stop("invalid spatial x,y", env)
         End If
 
+        If Not kernel Is Nothing Then
+            mesh.kernel = CLRVector.asNumeric(kernel)
+        End If
+
         If zi.IsNullOrEmpty Then
-            sampleinfo = xi _
-                .Select(Function(xj, j)
-                            Return New SampleInfo With {
-                                .ID = $"{xj},{yi(j)}",
-                                .batch = 1,
-                                .color = "black",
-                                .injectionOrder = j + 1,
-                                .sample_info = "spatial_2D",
-                                .sample_name = .ID,
-                                .shape = "rect"
-                            }
-                        End Function) _
-                .ToArray
+            ' spatial 2d
+            sampleinfo = SpatialInfo.Spatial2D(xi, yi, mesh.kernel, labels).ToArray
         Else
             If xi.Length <> zi.Length Then
                 Return Internal.debug.stop("invalid spatial x,y,z", env)
             End If
 
-            sampleinfo = xi _
-                .Select(Function(xj, j)
-                            Return New SampleInfo With {
-                                .batch = 1,
-                                .color = "black",
-                                .ID = $"{xj},{yi(j)},{zi(j)}",
-                                .injectionOrder = j + 1,
-                                .sample_info = "spatial_3D",
-                                .sample_name = .ID,
-                                .shape = "rect"
-                            }
-                        End Function) _
-                .ToArray
-        End If
-
-        If Not kernel Is Nothing Then
-            mesh.kernel = CLRVector.asNumeric(kernel)
+            ' spatial 3d
+            sampleinfo = SpatialInfo.Spatial3D(xi, yi, zi, mesh.kernel, labels).ToArray
         End If
 
         Return mesh.setSamples(sampleinfo, env)
