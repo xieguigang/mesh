@@ -61,7 +61,7 @@ declare namespace mesh {
      * @param mzdiff 
      * + default value Is ``0.005``.
      * @param intensity_max 
-     * + default value Is ``1000000000000000``.
+     * + default value Is ``10000000000000``.
      * @param env -
      * 
      * + default value Is ``null``.
@@ -116,7 +116,7 @@ declare namespace mesh {
         * @param group 
         * + default value Is ``null``.
         * @param template 
-        * + default value Is ``'[raster-%y.raw] [MS1][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]'``.
+        * + default value Is ``'[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]'``.
         * @param env -
         * 
         * + default value Is ``null``.

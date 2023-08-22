@@ -37,7 +37,7 @@ Public Module Rscript
                              Optional mass_range As Object = "50,1200",
                              Optional feature_size As Integer = 10000,
                              Optional mzdiff As Double = 0.005,
-                             Optional intensity_max As Double = 100000000000000.0,
+                             Optional intensity_max As Double = 10000000000000.0,
                              Optional env As Environment = Nothing) As MeshArguments
 
         Dim range As Double() = CLRVector.asNumeric(mass_range)
@@ -92,7 +92,7 @@ Public Module Rscript
                                       Optional kernel As Object = Nothing,
                                       <RRawVectorArgument>
                                       Optional group As Object = Nothing,
-                                      Optional template As String = "[raster-%y.raw] [MS1][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]",
+                                      Optional template As String = "[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]",
                                       Optional env As Environment = Nothing) As Object
 
         Dim xi As Integer() = CLRVector.asInteger(x)
