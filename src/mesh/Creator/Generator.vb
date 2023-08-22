@@ -1,5 +1,4 @@
-﻿Imports Microsoft.VisualBasic.DataStorage.netCDF.DataVector
-Imports Microsoft.VisualBasic.Language
+﻿Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.Distributions
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
@@ -12,42 +11,21 @@ Imports randf = Microsoft.VisualBasic.Math.RandomExtensions
 ''' </summary>
 Public Class Generator
 
-    ReadOnly args As MeshArguments
-    ReadOnly sample_groups As Dictionary(Of String, SampleInfo())
-    ReadOnly renderKernelProfiles As Boolean
-    ReadOnly ions As FeatureGenerator
+    Protected ReadOnly args As MeshArguments
+    Protected ReadOnly ions As FeatureGenerator
+
+    Protected sample_groups As Dictionary(Of String, SampleInfo())
 
     Sub New(args As MeshArguments)
-        Me.renderKernelProfiles = Not args.kernel.IsNullOrEmpty
-        Me.sample_groups = renderKernels(args) _
+        Me.args = args
+        Me.ions = New FeatureGenerator(args)
+        Me.sample_groups = args.sampleinfo _
             .GroupBy(Function(sample) sample.sample_info) _
             .ToDictionary(Function(group) group.Key,
                           Function(group)
                               Return group.ToArray
                           End Function)
-        Me.args = args
-        Me.ions = New FeatureGenerator(args)
     End Sub
-
-    ''' <summary>
-    ''' if render by kernel, then the corresponding kernel value will
-    ''' be attached to the sample via the sampleinfo color data.
-    ''' </summary>
-    ''' <param name="mesh"></param>
-    ''' <returns></returns>
-    Private Shared Function renderKernels(mesh As MeshArguments) As IEnumerable(Of SampleInfo)
-        If mesh.kernel.IsNullOrEmpty Then
-            Return mesh.sampleinfo
-        Else
-            Return mesh.sampleinfo _
-                .Select(Function(si, i)
-                            si = New SampleInfo(si)
-                            si.color = mesh.kernel(i).ToString
-                            Return si
-                        End Function) _
-                .ToArray
-        End If
-    End Function
 
     ''' <summary>
     ''' creates the expression value based on the arguments
@@ -102,17 +80,17 @@ Public Class Generator
 #Enable Warning
     End Function
 
-    Private Iterator Function SampleMatrix(sample_group As SampleInfo()) As IEnumerable(Of Vector)
+    Protected Const m_factor As Double = 5.3716
+    Protected Const v_factor As Double = m_factor * 0.25
+
+    Protected Overridable Iterator Function SampleMatrix(sample_group As SampleInfo()) As IEnumerable(Of Vector)
         ' get mean of each ion feature in current sample_group
-        Dim m_factor As Double = 5.3716
-        Dim v_factor As Double = m_factor * 0.25
         Dim mean_of_group As Vector = MathGamma.gamma(Vector.rand(args.featureSize) * m_factor) ^ 2
         ' various of each ion features in current sample_group
         Dim various As Double() = MathGamma.gamma(Vector.rand(args.featureSize) * v_factor) / 2.31
         Dim delta As Vector
         Dim sample_data As Vector
         Dim zero As Vector = Vector.Zero(1)
-        Dim kernel As Double
         Dim d As Integer = sample_group.Length / 20
         Dim i As i32 = 0
         Dim t0 As Date = Now
@@ -122,12 +100,6 @@ Public Class Generator
         End If
 
         For Each sample As SampleInfo In sample_group
-            If renderKernelProfiles Then
-                kernel = Val(sample.color)
-            Else
-                kernel = 1
-            End If
-
             If ++i Mod d = 0 Then
                 Call VBDebugger.EchoLine($"  * [{((i / sample_group.Length) * 100).ToString("F2")}%, {(Now - t0).FormatTime}] {sample.sample_name}...")
             End If
@@ -136,7 +108,7 @@ Public Class Generator
                 .Select(Function(x) randf.NextDouble(-x, x)) _
                 .AsVector
 
-            sample_data = mean_of_group * kernel + delta
+            sample_data = mean_of_group + delta
             sample_data(sample_data < 0) = zero
             ' sample_data = sample_data.Log
             ' sample_data(sample_data < 1) = Vector.Zero
