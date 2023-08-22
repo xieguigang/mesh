@@ -230,51 +230,18 @@ Public Module Rscript
         Dim dt As Double = CLRVector.asNumeric(rt_range).Range.Length / scans.expression.Length
         Dim t As Double = 0
         Dim sampleinfo As New Dictionary(Of String, SampleInfo)
+        Dim current As ScanMS1
 
         If Not mesh Is Nothing Then
             sampleinfo = mesh.sampleinfo.ToDictionary(Function(s) s.ID)
         End If
 
         For Each sample As DataFrameRow In scans.expression
-            Dim quantile As QuantileEstimationGK = sample.experiments.GKQuantile
-            Dim cut As Double = quantile.Query(q)
-            Dim expression As New Vector(sample.experiments)
-            Dim i = expression > cut
-            Dim mzi = mz(i)
-            Dim into = expression(i)
-            Dim scan_id As String
-
             t += dt
+            current = sample.PopulateMs1Scan(t, q, spatial, mz, sampleinfo)
 
-            If mzi.Length = 0 Then
-                Continue For
-            End If
-            If sampleinfo.ContainsKey(sample.geneID) Then
-                scan_id = sampleinfo(sample.geneID).sample_name
-            Else
-                scan_id = sample.geneID
-            End If
-
-            scan1.Add(New ScanMS1 With {
-                .mz = mzi.ToArray,
-                .BPC = into.Max,
-                .into = into.ToArray,
-                .rt = t,
-                .TIC = expression.Sum,
-                .scan_id = $"[MS1] {scan_id}, { .mz.Length} ions; total_ions={ .into.Sum.ToString("G3")}, basePeak={ .into.Max.ToString("G3")}, basePeak_m/z={ .mz(which.Max(.into)).ToString("F3")}"
-            })
-
-            If spatial Then
-                Dim xyz As String() = sample.geneID.Split(","c)
-                Dim current As ScanMS1 = scan1.Last
-
-                current.meta = New Dictionary(Of String, String)
-                current.meta.Add("x", xyz(0))
-                current.meta.Add("y", xyz(1))
-
-                If xyz.Length > 2 Then
-                    current.meta.Add("z", xyz(2))
-                End If
+            If Not current Is Nothing Then
+                Call scan1.Add(current)
             End If
         Next
 
@@ -290,5 +257,64 @@ Public Module Rscript
             .source = expr1.tag,
             .MS = scan1.ToArray
         }
+    End Function
+
+    <Extension>
+    Private Function PopulateMs1Scan(sample As DataFrameRow,
+                                     t As Double,
+                                     q As Double,
+                                     spatial As Boolean,
+                                     mz As Vector,
+                                     sampleinfo As Dictionary(Of String, SampleInfo)) As ScanMS1
+
+        Dim quantile As QuantileEstimationGK = sample.experiments.GKQuantile
+        Dim cut As Double = quantile.Query(q)
+        Dim expression As New Vector(sample.experiments)
+        Dim i = expression > cut
+        Dim mzi = mz(i)
+        Dim into = expression(i)
+        Dim scan_id As String
+        Dim sample_data As SampleInfo = Nothing
+        Dim s1 As ScanMS1
+
+        If mzi.Length = 0 Then
+            Return Nothing
+        End If
+        If sampleinfo.ContainsKey(sample.geneID) Then
+            sample_data = sampleinfo(sample.geneID)
+            scan_id = sample_data.sample_name
+        Else
+            scan_id = sample.geneID
+        End If
+
+        s1 = New ScanMS1 With {
+            .mz = mzi.ToArray,
+            .BPC = into.Max,
+            .into = into.ToArray,
+            .rt = t,
+            .TIC = expression.Sum,
+            .scan_id = $"[MS1] {scan_id}, { .mz.Length} ions; total_ions={ .into.Sum.ToString("G3")}, basePeak={ .into.Max.ToString("G3")}, basePeak_m/z={ .mz(which.Max(.into)).ToString("F3")}"
+        }
+
+        If spatial Then
+            Dim xyz As String() = sample.geneID.Split(","c)
+
+            s1.meta = New Dictionary(Of String, String)
+            s1.meta.Add("x", xyz(0))
+            s1.meta.Add("y", xyz(1))
+
+            If xyz.Length > 2 Then
+                s1.meta.Add("z", xyz(2))
+            End If
+        End If
+        If Not sample Is Nothing Then
+            If s1.meta Is Nothing Then
+                s1.meta = New Dictionary(Of String, String)
+            End If
+
+            s1.meta("sample") = sample_data.sample_info
+        End If
+
+        Return s1
     End Function
 End Module

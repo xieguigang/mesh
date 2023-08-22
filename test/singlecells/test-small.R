@@ -14,12 +14,14 @@ sink(file = "./run.txt");
 
 let mesh = mesh(
     mass.range = [50, 2000], 
-    feature.size = 100, 
+    feature.size = 1000, 
     mzdiff = 0.005);
 let raster = as.raster(readImage(`../../docs\single-cells-have-their-own-defenses-against-pathogens3.jpg`)); 
 let labels = raster_vec(raster);
-let gmm = clustering::gmm(labels, components = 8);
+let gmm = clustering::gmm(labels, components = 3);
 let gauss = gmm.predict_proba(gmm);
+
+print(labels);
 
 labels = gmm.predict(gmm);
 
