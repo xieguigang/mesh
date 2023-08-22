@@ -130,16 +130,21 @@ Public Module Rscript
     ''' <param name="env"></param>
     ''' <returns></returns>
     <ExportAPI("samples.raster")>
-    Public Function samplesRaster(mesh As MeshArguments, raster As RasterScaler, Optional env As Environment = Nothing) As Object
+    Public Function samplesRaster(mesh As MeshArguments, raster As RasterScaler,
+                                  <RRawVectorArgument>
+                                  Optional label As Object = Nothing,
+                                  Optional env As Environment = Nothing) As Object
+
         Dim pixels As PixelData() = raster.GetRasterData.ToArray
         Dim x As Integer() = pixels.Select(Function(p) p.X).ToArray
         Dim y As Integer() = pixels.Select(Function(p) p.Y).ToArray
         Dim kernels As Vector = pixels.Select(Function(p) p.Scale).AsVector
+        Dim labels As String() = CLRVector.asCharacter(label)
 
         kernels = kernels / kernels.Max
         kernels(kernels < 1) = Vector.Zero
 
-        mesh.setSpatialSamples(x, y, env:=env)
+        mesh.setSpatialSamples(x, y, group:=labels, env:=env)
         mesh.kernel = kernels
 
         Return mesh
@@ -208,6 +213,7 @@ Public Module Rscript
     <ExportAPI("as.mzPack")>
     <Extension>
     Public Function toMzPack(expr1 As Matrix,
+                             Optional mesh As MeshArguments = Nothing,
                              Optional q As Double = 0.7,
                              <RRawVectorArgument(GetType(Double))>
                              Optional rt_range As Object = "1,840",
@@ -223,6 +229,11 @@ Public Module Rscript
         Dim scan1 As New List(Of ScanMS1)
         Dim dt As Double = CLRVector.asNumeric(rt_range).Range.Length / scans.expression.Length
         Dim t As Double = 0
+        Dim sampleinfo As New Dictionary(Of String, SampleInfo)
+
+        If Not mesh Is Nothing Then
+            sampleinfo = mesh.sampleinfo.ToDictionary(Function(s) s.ID)
+        End If
 
         For Each sample As DataFrameRow In scans.expression
             Dim quantile As QuantileEstimationGK = sample.experiments.GKQuantile
@@ -231,11 +242,17 @@ Public Module Rscript
             Dim i = expression > cut
             Dim mzi = mz(i)
             Dim into = expression(i)
+            Dim scan_id As String
 
             t += dt
 
             If mzi.Length = 0 Then
                 Continue For
+            End If
+            If sampleinfo.ContainsKey(sample.geneID) Then
+                scan_id = sampleinfo(sample.geneID).sample_name
+            Else
+                scan_id = sample.geneID
             End If
 
             scan1.Add(New ScanMS1 With {
@@ -244,7 +261,7 @@ Public Module Rscript
                 .into = into.ToArray,
                 .rt = t,
                 .TIC = expression.Sum,
-                .scan_id = $"[MS1] {sample.geneID}, { .mz.Length} ions; total_ions={ .into.Sum}, basePeak={ .into.Max}, basePeak_m/z={ .mz(which.Max(.into))}"
+                .scan_id = $"[MS1] {scan_id}, { .mz.Length} ions; total_ions={ .into.Sum.ToString("G3")}, basePeak={ .into.Max.ToString("G3")}, basePeak_m/z={ .mz(which.Max(.into)).ToString("F3")}"
             })
 
             If spatial Then

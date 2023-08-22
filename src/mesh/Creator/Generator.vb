@@ -20,6 +20,7 @@ Public Class Generator
     ReadOnly renderKernelProfiles As Boolean
 
     Sub New(args As MeshArguments)
+        Me.renderKernelProfiles = Not args.kernel.IsNullOrEmpty
         Me.sample_groups = renderKernels(args) _
             .GroupBy(Function(sample) sample.sample_info) _
             .ToDictionary(Function(group) group.Key,
@@ -29,9 +30,14 @@ Public Class Generator
         Me.args = args
         Me.ions = New List(Of Double)
         Me.mass_range = New DoubleRange(args.mass_range)
-        Me.renderKernelProfiles = Not args.kernel.IsNullOrEmpty
     End Sub
 
+    ''' <summary>
+    ''' if render by kernel, then the corresponding kernel value will
+    ''' be attached to the sample via the sampleinfo color data.
+    ''' </summary>
+    ''' <param name="mesh"></param>
+    ''' <returns></returns>
     Private Shared Function renderKernels(mesh As MeshArguments) As IEnumerable(Of SampleInfo)
         If mesh.kernel.IsNullOrEmpty Then
             Return mesh.sampleinfo
