@@ -16,6 +16,7 @@ Imports SMRUCC.Rsharp.Runtime
 Imports SMRUCC.Rsharp.Runtime.Interop
 Imports SMRUCC.Rsharp.Runtime.Vectorization
 Imports REnv = SMRUCC.Rsharp.Runtime
+Imports std = System.Math
 
 ''' <summary>
 ''' MSdata expression matrix simulator for metabolomics analysis pipeline development and test.
@@ -37,7 +38,7 @@ Public Module Rscript
                              Optional mass_range As Object = "50,1200",
                              Optional feature_size As Integer = 10000,
                              Optional mzdiff As Double = 0.005,
-                             Optional intensity_max As Double = 10000000000000.0,
+                             Optional intensity_max As Double = 100000000.0,
                              Optional env As Environment = Nothing) As MeshArguments
 
         Dim range As Double() = CLRVector.asNumeric(mass_range)
@@ -147,7 +148,8 @@ Public Module Rscript
         Dim kernels As Vector = pixels.Select(Function(p) p.Scale).AsVector
         Dim labels As String() = CLRVector.asCharacter(label)
 
-        kernels = (kernels / kernels.Max).Exp
+        kernel_cutoff = std.Exp(kernel_cutoff * 2) ^ 2
+        kernels = ((kernels / kernels.Max) * 2).Exp ^ 2
         kernels(kernels < kernel_cutoff) = Vector.Zero
 
         mesh.setSpatialSamples(x, y, kernel:=kernels, group:=labels, env:=env)

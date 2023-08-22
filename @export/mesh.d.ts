@@ -61,7 +61,7 @@ declare namespace mesh {
      * @param mzdiff 
      * + default value Is ``0.005``.
      * @param intensity_max 
-     * + default value Is ``10000000000000``.
+     * + default value Is ``100000000``.
      * @param env -
      * 
      * + default value Is ``null``.

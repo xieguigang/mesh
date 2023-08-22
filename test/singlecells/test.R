@@ -22,7 +22,8 @@ let raster = as.raster(readImage(`../../docs\Visualize-Metabolic-Process-at-the-
 
 # print(labels);
 
-# labels = q_factors(labels, levels = 3);
+# labels = gmm.predict(gmm);
+# # labels = q_factors(labels, levels = 3);
 
 # print(labels);
 
@@ -31,7 +32,8 @@ rasterHeatmap(raster);
 dev.off();
 
 samples.raster(mesh, raster);
+# samples.raster(mesh, raster, label = labels);
 
-let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE, q= 0.1);
+let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE, q= 0.5);
 
 write.mzPack(pack, file = `demo_singlecells.mzPack`, version = 2);

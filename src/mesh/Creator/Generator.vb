@@ -1,4 +1,5 @@
-﻿Imports Microsoft.VisualBasic.Language
+﻿Imports Microsoft.VisualBasic.DataStorage.netCDF.DataVector
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.Distributions
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
@@ -78,6 +79,17 @@ Public Class Generator
             sample_data.AddRange(SampleMatrix(sample_group.Value).Select(Function(v) v.ToArray))
         Next
 
+        'For i As Integer = 0 To ions.Length - 1
+        '    Dim ind As Integer = i
+        '    Dim v As New Vector(sample_data.Select(Function(r) r(ind)))
+
+        '    v = (((v / (v.Sum + 1)).Exp * 2.0) ^ 2) * args.intensity_max
+
+        '    For j As Integer = 0 To sample_data.Count - 1
+        '        sample_data(j)(i) = v(j)
+        '    Next
+        'Next
+
 #Disable Warning
         For i As Integer = 0 To ions.Length - 1
             Yield New DataFrameRow With {
@@ -94,9 +106,9 @@ Public Class Generator
         ' get mean of each ion feature in current sample_group
         Dim m_factor As Double = 5.3716
         Dim v_factor As Double = m_factor * 0.25
-        Dim mean_of_group As Vector = MathGamma.gamma(Vector.rand(args.featureSize) * m_factor)
+        Dim mean_of_group As Vector = MathGamma.gamma(Vector.rand(args.featureSize) * m_factor) ^ 2
         ' various of each ion features in current sample_group
-        Dim various As Double() = MathGamma.gamma(Vector.rand(args.featureSize) * v_factor)
+        Dim various As Double() = MathGamma.gamma(Vector.rand(args.featureSize) * v_factor) / 2.31
         Dim delta As Vector
         Dim sample_data As Vector
         Dim zero As Vector = Vector.Zero(1)
@@ -122,12 +134,14 @@ Public Class Generator
 
             delta = various _
                 .Select(Function(x) randf.NextDouble(-x, x)) _
-                .AsVector
+                .AsVector _
+                .Z
 
             sample_data = mean_of_group * kernel + delta
             sample_data(sample_data < 0) = zero
             ' sample_data = sample_data.Log
             ' sample_data(sample_data < 1) = Vector.Zero
+            ' sample_data = (sample_data / (sample_data.Sum + 1)) * args.intensity_max
             sample_data = sample_data * args.intensity_max
 
             Yield sample_data
