@@ -5,6 +5,7 @@ Imports BioNovoGene.Analytical.MassSpectrometry.Assembly.mzData.mzWebCache
 Imports BioNovoGene.BioDeep.Chemoinformatics
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Imaging.Drawing2D.HeatMap
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports Microsoft.VisualBasic.Math.Quantile
@@ -231,6 +232,8 @@ Public Module Rscript
         Dim t As Double = 0
         Dim sampleinfo As New Dictionary(Of String, SampleInfo)
         Dim current As ScanMS1
+        Dim d As Integer = scans.expression.Length / 20
+        Dim p As i32 = 0
 
         If Not mesh Is Nothing Then
             sampleinfo = mesh.sampleinfo.ToDictionary(Function(s) s.ID)
@@ -242,6 +245,11 @@ Public Module Rscript
 
             If Not current Is Nothing Then
                 Call scan1.Add(current)
+            End If
+            If (++p Mod d) = 0 Then
+                If scan1.Count > 0 Then
+                    Call VBDebugger.EchoLine($"[{p}/{scans.expression.Length}] {(p / scans.expression.Length * 100).ToString("F2")}% ... {scan1.Last.scan_id}")
+                End If
             End If
         Next
 
