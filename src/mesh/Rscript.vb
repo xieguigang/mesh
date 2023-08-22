@@ -125,6 +125,8 @@ Public Module Rscript
             sampleinfo = SpatialInfo.Spatial3D(xi, yi, zi, mesh.kernel, labels, template).ToArray
         End If
 
+        mesh.spatial = True
+
         Return mesh.setSamples(sampleinfo, env)
     End Function
 
