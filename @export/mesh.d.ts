@@ -39,13 +39,15 @@ declare namespace mesh {
      * @param mesh -
      * @param mzpack 
      * + default value Is ``false``.
+     * @param q 
+     * + default value Is ``0.7``.
      * @param spatial 
      * + default value Is ``false``.
      * @return this function returns a GCModeller expression matrix object or 
      *  MZKit mzpack data object based on the parameter option of 
      *  **`mzpack`**.
    */
-   function expr1(mesh: object, mzpack?: boolean, spatial?: boolean): object|object;
+   function expr1(mesh: object, mzpack?: boolean, q?: number, spatial?: boolean): object|object;
    /**
     * Create a mesh argument for run metabolomics expression matrix simulation
     * 

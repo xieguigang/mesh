@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports System.Text
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
 
 Module SpatialInfo
@@ -6,7 +7,8 @@ Module SpatialInfo
     <Extension>
     Public Iterator Function Spatial2D(x As Integer(), y As Integer(),
                                        kernels As Double(),
-                                       Optional labels As String() = Nothing) As IEnumerable(Of SampleInfo)
+                                       Optional labels As String() = Nothing,
+                                       Optional template As String = "[raster-%y.raw] [MS1][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]") As IEnumerable(Of SampleInfo)
         Dim scan_id As String
 
         If labels.IsNullOrEmpty Then
@@ -14,11 +16,12 @@ Module SpatialInfo
         End If
 
         For i As Integer = 0 To x.Length - 1
-            If kernels Is Nothing Then
-                scan_id = $"[{x(i)},{y(i)}] {labels(i)}_{i + 1}"
-            Else
-                scan_id = $"[{x(i)},{y(i)}] {labels(i)}_{i + 1}; KERNEL={kernels(i).ToString("F3")}"
-            End If
+            'If kernels Is Nothing Then
+            '    scan_id = $"[{x(i)},{y(i)}] {labels(i)}_{i + 1}"
+            'Else
+            '    scan_id = $"[{x(i)},{y(i)}] {labels(i)}_{i + 1}; KERNEL={kernels(i).ToString("F3")}"
+            'End If
+            scan_id = FillScanId(template, x(i), y(i), 0, i + 1)
 
             Yield New SampleInfo With {
                 .ID = $"{x(i)},{y(i)}",
@@ -32,11 +35,22 @@ Module SpatialInfo
         Next
     End Function
 
+    Private Function FillScanId(template As String, x As Integer, y As Integer, z As Integer, i As Integer) As String
+        Dim sb As New StringBuilder(template)
+
+        sb.Replace("%y", y)
+        sb.Replace("%x", x)
+        sb.Replace("%z", z)
+        sb.Replace("%d", i)
+
+        Return sb.ToString
+    End Function
+
     <Extension>
     Public Iterator Function Spatial3D(x As Integer(), y As Integer(), z As Integer(),
                                        kernels As Double(),
-                                       Optional labels As String() = Nothing) As IEnumerable(Of SampleInfo)
-
+                                       Optional labels As String() = Nothing,
+                                       Optional template As String = "[raster-%y.raw] [MS1][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]") As IEnumerable(Of SampleInfo)
         Dim scan_id As String
 
         If labels.IsNullOrEmpty Then
@@ -44,11 +58,12 @@ Module SpatialInfo
         End If
 
         For i As Integer = 0 To x.Length - 1
-            If kernels Is Nothing Then
-                scan_id = $"[{x(i)},{y(i)},{z(i)}] {labels(i)}_{i + 1}"
-            Else
-                scan_id = $"[{x(i)},{y(i)},{z(i)}] {labels(i)}_{i + 1}; KERNEL={kernels(i).ToString("F3")}"
-            End If
+            'If kernels Is Nothing Then
+            '    scan_id = $"[{x(i)},{y(i)},{z(i)}] {labels(i)}_{i + 1}"
+            'Else
+            '    scan_id = $"[{x(i)},{y(i)},{z(i)}] {labels(i)}_{i + 1}; KERNEL={kernels(i).ToString("F3")}"
+            'End If
+            scan_id = FillScanId(template, x(i), y(i), z(i), i + 1)
 
             Yield New SampleInfo With {
                 .batch = 1,

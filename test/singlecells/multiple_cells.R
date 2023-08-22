@@ -41,6 +41,6 @@ dev.off();
 
 samples.raster(mesh, raster, label = labels);
 
-let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE);
+let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE, q = 0.5);
 
 write.mzPack(pack, file = `singlecells-multiple.mzPack`, version = 2);

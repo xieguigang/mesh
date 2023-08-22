@@ -92,6 +92,7 @@ Public Module Rscript
                                       Optional kernel As Object = Nothing,
                                       <RRawVectorArgument>
                                       Optional group As Object = Nothing,
+                                      Optional template As String = "[raster-%y.raw] [MS1][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]",
                                       Optional env As Environment = Nothing) As Object
 
         Dim xi As Integer() = CLRVector.asInteger(x)
@@ -108,16 +109,19 @@ Public Module Rscript
             mesh.kernel = CLRVector.asNumeric(kernel)
         End If
 
+        template = template.Replace("%min", mesh.mass_range.Min.ToString("F4"))
+        template = template.Replace("%max", mesh.mass_range.Max.ToString("F4"))
+
         If zi.IsNullOrEmpty Then
             ' spatial 2d
-            sampleinfo = SpatialInfo.Spatial2D(xi, yi, mesh.kernel, labels).ToArray
+            sampleinfo = SpatialInfo.Spatial2D(xi, yi, mesh.kernel, labels, template).ToArray
         Else
             If xi.Length <> zi.Length Then
                 Return Internal.debug.stop("invalid spatial x,y,z", env)
             End If
 
             ' spatial 3d
-            sampleinfo = SpatialInfo.Spatial3D(xi, yi, zi, mesh.kernel, labels).ToArray
+            sampleinfo = SpatialInfo.Spatial3D(xi, yi, zi, mesh.kernel, labels, template).ToArray
         End If
 
         Return mesh.setSamples(sampleinfo, env)
@@ -193,11 +197,16 @@ Public Module Rscript
     <RApiReturn(GetType(Matrix), GetType(mzPack))>
     Public Function expr0(mesh As MeshArguments,
                           Optional mzpack As Boolean = False,
+                          Optional q As Double = 0.7,
                           Optional spatial As Boolean = False) As Object
         If mzpack Then
             Return New Generator(mesh) _
                 .GetExpressionMatrix _
-                .toMzPack(spatial:=spatial, mesh:=mesh)
+                .toMzPack(
+                    spatial:=spatial,
+                    mesh:=mesh,
+                    q:=q
+                )
         Else
             Return New Generator(mesh).GetExpressionMatrix
         End If
