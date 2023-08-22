@@ -95,7 +95,7 @@ declare namespace mesh {
         * @param label 
         * + default value Is ``null``.
         * @param kernel_cutoff 
-        * + default value Is ``1E-05``.
+        * + default value Is ``0.01``.
         * @param env -
         * 
         * + default value Is ``null``.

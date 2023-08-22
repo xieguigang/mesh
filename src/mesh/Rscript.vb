@@ -138,7 +138,7 @@ Public Module Rscript
     Public Function samplesRaster(mesh As MeshArguments, raster As RasterScaler,
                                   <RRawVectorArgument>
                                   Optional label As Object = Nothing,
-                                  Optional kernel_cutoff As Double = 0.00001,
+                                  Optional kernel_cutoff As Double = 0.01,
                                   Optional env As Environment = Nothing) As Object
 
         Dim pixels As PixelData() = raster.GetRasterData.ToArray

@@ -110,18 +110,22 @@ Public Class Generator
         End If
 
         For Each sample As SampleInfo In sample_group
+            If renderKernelProfiles Then
+                kernel = Val(sample.color)
+            Else
+                kernel = 1
+            End If
+
+            If kernel <= 0.0 Then
+                Continue For
+            End If
+
             delta = various _
                 .Select(Function(x) randf.NextDouble(-x, x)) _
                 .AsVector
 
             If ++i Mod d = 0 Then
                 Call VBDebugger.EchoLine($"  * [{((i / sample_group.Length) * 100).ToString("F2")}%, {(Now - t0).FormatTime}] {sample.sample_name}...")
-            End If
-
-            If renderKernelProfiles Then
-                kernel = Val(sample.color)
-            Else
-                kernel = 1
             End If
 
             sample_data = mean_of_group * kernel + delta

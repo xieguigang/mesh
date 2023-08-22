@@ -16,22 +16,22 @@ let mesh = mesh(
     mzdiff = 0.005);
 let raster = as.raster(readImage(`../../docs\Visualize-Metabolic-Process-at-the-Single-Cell-Level.png`)); 
 
-let labels = raster_vec(raster);
+# let labels = raster_vec(raster);
 # let gmm = clustering::gmm(labels, components = 6);
 # let gauss = gmm.predict_proba(gmm);
 
-print(labels);
+# print(labels);
 
-labels = q_factors(labels, levels = 9);
+# labels = q_factors(labels, levels = 3);
 
-print(labels);
+# print(labels);
 
 bitmap(file = "./raster1.png", size = [1920, 1080]);
 rasterHeatmap(raster);
 dev.off();
 
-samples.raster(mesh, raster,label = `CLASS_${labels}`);
+samples.raster(mesh, raster);
 
-let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE, q= 0.5);
+let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE, q= 0.1);
 
 write.mzPack(pack, file = `demo_singlecells.mzPack`, version = 2);
