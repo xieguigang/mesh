@@ -93,14 +93,17 @@ declare namespace mesh {
         * @param mesh -
         * @param x -
         * @param y -
-        * @param z 
+        * @param z z axis of the spatial spot
+        * 
         * + default value Is ``null``.
         * @param kernel 
+        * + default value Is ``null``.
+        * @param group 
         * + default value Is ``null``.
         * @param env -
         * 
         * + default value Is ``null``.
       */
-      function spatial(mesh: object, x: any, y: any, z?: any, kernel?: any, env?: object): any;
+      function spatial(mesh: object, x: any, y: any, z?: any, kernel?: any, group?: any, env?: object): any;
    }
 }
