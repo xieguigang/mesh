@@ -17,7 +17,7 @@ Module SpatialInfo
             If kernels Is Nothing Then
                 scan_id = $"[{x(i)},{y(i)}] {labels(i)}_{i + 1}"
             Else
-                scan_id = $"[{x(i)},{y(i)}] {labels(i)}_{i + 1}; KERNEL={kernels(i)}"
+                scan_id = $"[{x(i)},{y(i)}] {labels(i)}_{i + 1}; KERNEL={kernels(i).ToString("F3")}"
             End If
 
             Yield New SampleInfo With {
@@ -47,7 +47,7 @@ Module SpatialInfo
             If kernels Is Nothing Then
                 scan_id = $"[{x(i)},{y(i)},{z(i)}] {labels(i)}_{i + 1}"
             Else
-                scan_id = $"[{x(i)},{y(i)},{z(i)}] {labels(i)}_{i + 1}; KERNEL={kernels(i)}"
+                scan_id = $"[{x(i)},{y(i)},{z(i)}] {labels(i)}_{i + 1}; KERNEL={kernels(i).ToString("F3")}"
             End If
 
             Yield New SampleInfo With {

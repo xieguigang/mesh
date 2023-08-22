@@ -105,6 +105,10 @@ Public Class Generator
         Dim i As i32 = 0
         Dim t0 As Date = Now
 
+        If d = 0 Then
+            d = 1
+        End If
+
         For Each sample As SampleInfo In sample_group
             delta = various _
                 .Select(Function(x) randf.NextDouble(-x, x)) _
