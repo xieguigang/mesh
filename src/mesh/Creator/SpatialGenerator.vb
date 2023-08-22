@@ -40,7 +40,7 @@ Public Class SpatialGenerator : Inherits Generator
 
     Protected Overrides Iterator Function SampleMatrix(sample_group() As SampleInfo) As IEnumerable(Of Vector)
         Dim kernel As New Vector(sample_group.Select(Function(s) Val(s.color)))
-        Dim zero As Vector = Vector.Zero(1)
+        Dim zero As Vector = Vector.Zero()
         Dim d As Integer = sample_group.Length / 20
         Dim i As i32 = 0
         Dim t0 As Date = Now
@@ -60,6 +60,7 @@ Public Class SpatialGenerator : Inherits Generator
             Dim various As Vector = MathGamma.gamma(Vector.rand(min:=-3, max:=3, args.featureSize) * v_factor) / 2.31
 
             sample_data = sample_data + various
+            sample_data(sample_data < 0) = zero
 
             If ++i Mod d = 0 Then
                 Call VBDebugger.EchoLine($"  * [{((i / sample_group.Length) * 100).ToString("F2")}%, {(Now - t0).FormatTime}] {spot.sample_name}...")
