@@ -1,15 +1,10 @@
-﻿Imports System.IO
-Imports BioNovoGene.Analytical.MassSpectrometry.Math.Ms1.PrecursorType
-Imports BioNovoGene.BioDeep.Chemoinformatics
-Imports Microsoft.VisualBasic.ComponentModel.Ranges.Model
-Imports Microsoft.VisualBasic.Language
+﻿Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.Distributions
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports SMRUCC.genomics.Analysis.HTS.DataFrame
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
 Imports randf = Microsoft.VisualBasic.Math.RandomExtensions
-Imports stdNum = System.Math
 
 ''' <summary>
 ''' expression data matrix generator
@@ -17,10 +12,9 @@ Imports stdNum = System.Math
 Public Class Generator
 
     ReadOnly args As MeshArguments
-    ReadOnly ions As List(Of Double)
-    ReadOnly mass_range As DoubleRange
     ReadOnly sample_groups As Dictionary(Of String, SampleInfo())
     ReadOnly renderKernelProfiles As Boolean
+    ReadOnly ions As FeatureGenerator
 
     Sub New(args As MeshArguments)
         Me.renderKernelProfiles = Not args.kernel.IsNullOrEmpty
@@ -31,8 +25,7 @@ Public Class Generator
                               Return group.ToArray
                           End Function)
         Me.args = args
-        Me.ions = New List(Of Double)
-        Me.mass_range = New DoubleRange(args.mass_range)
+        Me.ions = New FeatureGenerator(args)
     End Sub
 
     ''' <summary>
@@ -60,8 +53,6 @@ Public Class Generator
     ''' </summary>
     ''' <returns></returns>
     Public Function GetExpressionMatrix() As Matrix
-        Call ions.Clear()
-
         Return New Matrix With {
             .sampleID = sample_groups _
                 .Select(Function(group) group.Value.Select(Function(sample) sample.ID)) _
@@ -73,7 +64,7 @@ Public Class Generator
     End Function
 
     Private Iterator Function GetIonExpressions() As IEnumerable(Of DataFrameRow)
-        Dim ions As Double() = createIonFeatures().ToArray
+        Dim ions As Double() = Me.ions.Clear().CreateIonFeatures().ToArray
         Dim sample_info As New List(Of (name As String, SampleInfo()))
         Dim sample_data As New List(Of Double())
 
@@ -137,81 +128,5 @@ Public Class Generator
 
             Yield sample_data
         Next
-    End Function
-
-    ''' <summary>
-    ''' get ion feature m/z value of a specific metabolite
-    ''' </summary>
-    ''' <param name="meta"></param>
-    ''' <returns></returns>
-    Private Function getIon(meta As MetaboliteAnnotation) As Double
-        Dim ion As Double
-
-        ' the order of the elements in the adducts list
-        ' will affects the generated ion feature set
-        For Each adduct As MzCalculator In args.adducts
-            ion = adduct.CalcMZ(meta.ExactMass)
-
-            If checkIon(ion) Then
-                ions.Add(ion)
-                Return ion
-            End If
-        Next
-
-        Return ion
-    End Function
-
-    ''' <summary>
-    ''' Create ion features
-    ''' </summary>
-    ''' <returns></returns>
-    Private Iterator Function createIonFeatures() As IEnumerable(Of Double)
-        Dim features As Integer = args.featureSize
-        Dim ion As Double
-
-        For Each meta As MetaboliteAnnotation In args.metabolites.SafeQuery
-            ion = getIon(meta)
-            features -= 1
-
-            Yield ion
-        Next
-
-        Do While features > 0
-            ion = getIon()
-            features -= 1
-
-            Yield ion
-        Loop
-    End Function
-
-    ''' <summary>
-    ''' check mz is duplicated or not
-    ''' </summary>
-    ''' <param name="mz"></param>
-    ''' <returns></returns>
-    Private Function checkIon(mz As Double) As Boolean
-        Return Not ions _
-            .Any(Function(mzi)
-                     Return stdNum.Abs(mzi - mz) <= args.massdiff
-                 End Function)
-    End Function
-
-    ''' <summary>
-    ''' Generate a new ion m/z value
-    ''' </summary>
-    ''' <returns></returns>
-    Private Function getIon() As Double
-        Do While True
-            Dim mz As Double = randf.GetRandomValue(mass_range)
-            ' check mz is duplicated or not
-            Dim check As Boolean = checkIon(mz)
-
-            If check Then
-                ions.Add(mz)
-                Return mz
-            End If
-        Loop
-
-        Throw New InvalidDataException("this error will never happends!")
     End Function
 End Class
