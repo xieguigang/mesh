@@ -125,7 +125,7 @@ Public Class Generator
                 .AsVector
 
             sample_data = mean_of_group * kernel + delta
-            sample_data(sample_data < 1) = zero
+            sample_data(sample_data < 0) = zero
             ' sample_data = sample_data.Log
             ' sample_data(sample_data < 1) = Vector.Zero
             sample_data = sample_data * args.intensity_max
