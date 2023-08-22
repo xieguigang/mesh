@@ -11,6 +11,9 @@ Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
 Imports randf = Microsoft.VisualBasic.Math.RandomExtensions
 Imports stdNum = System.Math
 
+''' <summary>
+''' expression data matrix generator
+''' </summary>
 Public Class Generator
 
     ReadOnly args As MeshArguments
@@ -127,9 +130,16 @@ Public Class Generator
         Next
     End Function
 
+    ''' <summary>
+    ''' get ion feature m/z value of a specific metabolite
+    ''' </summary>
+    ''' <param name="meta"></param>
+    ''' <returns></returns>
     Private Function getIon(meta As MetaboliteAnnotation) As Double
         Dim ion As Double
 
+        ' the order of the elements in the adducts list
+        ' will affects the generated ion feature set
         For Each adduct As MzCalculator In args.adducts
             ion = adduct.CalcMZ(meta.ExactMass)
 
@@ -142,6 +152,10 @@ Public Class Generator
         Return ion
     End Function
 
+    ''' <summary>
+    ''' Create ion features
+    ''' </summary>
+    ''' <returns></returns>
     Private Iterator Function createIonFeatures() As IEnumerable(Of Double)
         Dim features As Integer = args.featureSize
         Dim ion As Double
@@ -173,6 +187,10 @@ Public Class Generator
                  End Function)
     End Function
 
+    ''' <summary>
+    ''' Generate a new ion m/z value
+    ''' </summary>
+    ''' <returns></returns>
     Private Function getIon() As Double
         Do While True
             Dim mz As Double = randf.GetRandomValue(mass_range)

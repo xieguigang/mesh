@@ -41,11 +41,15 @@ Public Class MeshArguments
     ''' </summary>
     ''' <returns></returns>
     Public Property metabolites As MetaboliteAnnotation()
+
     ''' <summary>
     ''' adducts for evaluate ion m/z features from the <see cref="MetaboliteAnnotation.ExactMass"/> 
     ''' of the metabolites
     ''' </summary>
     ''' <returns></returns>
+    ''' <remarks>
+    ''' the order of the adducts will affects the generated ion feature set
+    ''' </remarks>
     Public Property adducts As MzCalculator()
 
     Public Function CreateMatrix() As Matrix
