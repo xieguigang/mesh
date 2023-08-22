@@ -23,6 +23,7 @@ Public Class Generator
     ReadOnly renderKernelProfiles As Boolean
 
     Sub New(args As MeshArguments)
+        Me.renderKernelProfiles = Not args.kernel.IsNullOrEmpty
         Me.sample_groups = renderKernels(args) _
             .GroupBy(Function(sample) sample.sample_info) _
             .ToDictionary(Function(group) group.Key,
@@ -32,9 +33,14 @@ Public Class Generator
         Me.args = args
         Me.ions = New List(Of Double)
         Me.mass_range = New DoubleRange(args.mass_range)
-        Me.renderKernelProfiles = Not args.kernel.IsNullOrEmpty
     End Sub
 
+    ''' <summary>
+    ''' if render by kernel, then the corresponding kernel value will
+    ''' be attached to the sample via the sampleinfo color data.
+    ''' </summary>
+    ''' <param name="mesh"></param>
+    ''' <returns></returns>
     Private Shared Function renderKernels(mesh As MeshArguments) As IEnumerable(Of SampleInfo)
         If mesh.kernel.IsNullOrEmpty Then
             Return mesh.sampleinfo
@@ -72,7 +78,10 @@ Public Class Generator
         Dim sample_data As New List(Of Double())
 
         For Each sample_group In sample_groups
-            Call VBDebugger.EchoLine($"Processing sample group: {sample_group.Key}...")
+            Call VBDebugger.EchoLine("")
+            Call VBDebugger.EchoLine($" Processing sample group: {sample_group.Key}...")
+            Call VBDebugger.EchoLine($"    -> {sample_group.Value.Length} sample files...")
+            Call VBDebugger.EchoLine("")
 
             sample_info.Add((sample_group.Key, sample_group.Value))
             sample_data.AddRange(SampleMatrix(sample_group.Value).Select(Function(v) v.ToArray))
@@ -99,7 +108,7 @@ Public Class Generator
         Dim various As Double() = MathGamma.gamma(Vector.rand(args.featureSize) * v_factor)
         Dim delta As Vector
         Dim sample_data As Vector
-        Dim one As Vector = Vector.Ones(1)
+        Dim zero As Vector = Vector.Zero(1)
         Dim kernel As Double
         Dim d As Integer = sample_group.Length / 20
         Dim i As i32 = 0
@@ -121,9 +130,9 @@ Public Class Generator
             End If
 
             sample_data = mean_of_group * kernel + delta
-            sample_data(sample_data < 1) = one
-            sample_data = sample_data.Log
-            sample_data(sample_data < 1) = Vector.Zero
+            sample_data(sample_data < 10) = zero
+            ' sample_data = sample_data.Log
+            ' sample_data(sample_data < 1) = Vector.Zero
             sample_data = sample_data * args.intensity_max
 
             Yield sample_data

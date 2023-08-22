@@ -5,6 +5,7 @@ Imports BioNovoGene.Analytical.MassSpectrometry.Assembly.mzData.mzWebCache
 Imports BioNovoGene.BioDeep.Chemoinformatics
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Imaging.Drawing2D.HeatMap
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports Microsoft.VisualBasic.Math.Quantile
@@ -75,6 +76,9 @@ Public Module Rscript
     ''' <param name="mesh"></param>
     ''' <param name="x"></param>
     ''' <param name="y"></param>
+    ''' <param name="z">
+    ''' z axis of the spatial spot
+    ''' </param>
     ''' <param name="env"></param>
     ''' <returns></returns>
     <ExportAPI("samples.spatial")>
@@ -86,69 +90,62 @@ Public Module Rscript
                                       Optional z As Object = Nothing,
                                       <RRawVectorArgument>
                                       Optional kernel As Object = Nothing,
+                                      <RRawVectorArgument>
+                                      Optional group As Object = Nothing,
                                       Optional env As Environment = Nothing) As Object
 
         Dim xi As Integer() = CLRVector.asInteger(x)
         Dim yi As Integer() = CLRVector.asInteger(y)
         Dim zi As Integer() = CLRVector.asInteger(z)
         Dim sampleinfo As SampleInfo()
+        Dim labels As String() = CLRVector.asCharacter(group)
 
         If xi.Length <> yi.Length Then
             Return Internal.debug.stop("invalid spatial x,y", env)
-        End If
-
-        If zi.IsNullOrEmpty Then
-            sampleinfo = xi _
-                .Select(Function(xj, j)
-                            Return New SampleInfo With {
-                                .ID = $"{xj},{yi(j)}",
-                                .batch = 1,
-                                .color = "black",
-                                .injectionOrder = j + 1,
-                                .sample_info = "spatial_2D",
-                                .sample_name = .ID,
-                                .shape = "rect"
-                            }
-                        End Function) _
-                .ToArray
-        Else
-            If xi.Length <> zi.Length Then
-                Return Internal.debug.stop("invalid spatial x,y,z", env)
-            End If
-
-            sampleinfo = xi _
-                .Select(Function(xj, j)
-                            Return New SampleInfo With {
-                                .batch = 1,
-                                .color = "black",
-                                .ID = $"{xj},{yi(j)},{zi(j)}",
-                                .injectionOrder = j + 1,
-                                .sample_info = "spatial_3D",
-                                .sample_name = .ID,
-                                .shape = "rect"
-                            }
-                        End Function) _
-                .ToArray
         End If
 
         If Not kernel Is Nothing Then
             mesh.kernel = CLRVector.asNumeric(kernel)
         End If
 
+        If zi.IsNullOrEmpty Then
+            ' spatial 2d
+            sampleinfo = SpatialInfo.Spatial2D(xi, yi, mesh.kernel, labels).ToArray
+        Else
+            If xi.Length <> zi.Length Then
+                Return Internal.debug.stop("invalid spatial x,y,z", env)
+            End If
+
+            ' spatial 3d
+            sampleinfo = SpatialInfo.Spatial3D(xi, yi, zi, mesh.kernel, labels).ToArray
+        End If
+
         Return mesh.setSamples(sampleinfo, env)
     End Function
 
+    ''' <summary>
+    ''' Create a spatial sample via the given raster matrix
+    ''' </summary>
+    ''' <param name="mesh"></param>
+    ''' <param name="raster"></param>
+    ''' <param name="env"></param>
+    ''' <returns></returns>
     <ExportAPI("samples.raster")>
-    Public Function samplesRaster(mesh As MeshArguments, raster As RasterScaler, Optional env As Environment = Nothing) As Object
+    Public Function samplesRaster(mesh As MeshArguments, raster As RasterScaler,
+                                  <RRawVectorArgument>
+                                  Optional label As Object = Nothing,
+                                  Optional env As Environment = Nothing) As Object
+
         Dim pixels As PixelData() = raster.GetRasterData.ToArray
         Dim x As Integer() = pixels.Select(Function(p) p.X).ToArray
         Dim y As Integer() = pixels.Select(Function(p) p.Y).ToArray
         Dim kernels As Vector = pixels.Select(Function(p) p.Scale).AsVector
+        Dim labels As String() = CLRVector.asCharacter(label)
 
         kernels = kernels / kernels.Max
         kernels(kernels < 1) = Vector.Zero
 
-        mesh.setSpatialSamples(x, y, env:=env)
+        mesh.setSpatialSamples(x, y, kernel:=kernels, group:=labels, env:=env)
         mesh.kernel = kernels
 
         Return mesh
@@ -199,7 +196,7 @@ Public Module Rscript
         If mzpack Then
             Return New Generator(mesh) _
                 .GetExpressionMatrix _
-                .toMzPack(spatial:=spatial)
+                .toMzPack(spatial:=spatial, mesh:=mesh)
         Else
             Return New Generator(mesh).GetExpressionMatrix
         End If
@@ -217,6 +214,7 @@ Public Module Rscript
     <ExportAPI("as.mzPack")>
     <Extension>
     Public Function toMzPack(expr1 As Matrix,
+                             Optional mesh As MeshArguments = Nothing,
                              Optional q As Double = 0.7,
                              <RRawVectorArgument(GetType(Double))>
                              Optional rt_range As Object = "1,840",
@@ -232,40 +230,25 @@ Public Module Rscript
         Dim scan1 As New List(Of ScanMS1)
         Dim dt As Double = CLRVector.asNumeric(rt_range).Range.Length / scans.expression.Length
         Dim t As Double = 0
+        Dim sampleinfo As New Dictionary(Of String, SampleInfo)
+        Dim current As ScanMS1
+        Dim d As Integer = scans.expression.Length / 25
+        Dim p As i32 = 0
+
+        If Not mesh Is Nothing Then
+            sampleinfo = mesh.sampleinfo.ToDictionary(Function(s) s.ID)
+        End If
 
         For Each sample As DataFrameRow In scans.expression
-            Dim quantile As QuantileEstimationGK = sample.experiments.GKQuantile
-            Dim cut As Double = quantile.Query(q)
-            Dim expression As New Vector(sample.experiments)
-            Dim i = expression > cut
-            Dim mzi = mz(i)
-            Dim into = expression(i)
-
             t += dt
+            current = sample.PopulateMs1Scan(t, q, spatial, mz, sampleinfo)
 
-            If mzi.Length = 0 Then
-                Continue For
+            If Not current Is Nothing Then
+                Call scan1.Add(current)
             End If
-
-            scan1.Add(New ScanMS1 With {
-                .mz = mzi.ToArray,
-                .BPC = into.Max,
-                .into = into.ToArray,
-                .rt = t,
-                .TIC = expression.Sum,
-                .scan_id = $"[MS1] {sample.geneID}, { .mz.Length} ions; total_ions={ .into.Sum}, basePeak={ .into.Max}, basePeak_m/z={ .mz(which.Max(.into))}"
-            })
-
-            If spatial Then
-                Dim xyz As String() = sample.geneID.Split(","c)
-                Dim current As ScanMS1 = scan1.Last
-
-                current.meta = New Dictionary(Of String, String)
-                current.meta.Add("x", xyz(0))
-                current.meta.Add("y", xyz(1))
-
-                If xyz.Length > 2 Then
-                    current.meta.Add("z", xyz(2))
+            If (++p Mod d) = 0 Then
+                If scan1.Count > 0 Then
+                    Call VBDebugger.EchoLine($"[{p}/{scans.expression.Length}] {(p / scans.expression.Length * 100).ToString("F2")}% ... {scan1.Last.scan_id}")
                 End If
             End If
         Next
@@ -282,5 +265,65 @@ Public Module Rscript
             .source = expr1.tag,
             .MS = scan1.ToArray
         }
+    End Function
+
+    <Extension>
+    Private Function PopulateMs1Scan(sample As DataFrameRow,
+                                     t As Double,
+                                     q As Double,
+                                     spatial As Boolean,
+                                     mz As Vector,
+                                     sampleinfo As Dictionary(Of String, SampleInfo)) As ScanMS1
+
+        Dim quantile As QuantileEstimationGK = sample.experiments.GKQuantile
+        Dim cut As Double = quantile.Query(q)
+        Dim expression As New Vector(sample.experiments)
+        Dim i = expression > cut
+        Dim mzi = mz(i)
+        Dim into = expression(i)
+        Dim scan_id As String
+        Dim sample_data As SampleInfo = Nothing
+        Dim s1 As ScanMS1
+
+        If mzi.Length = 0 Then
+            Return Nothing
+        End If
+
+        If sampleinfo.ContainsKey(sample.geneID) Then
+            sample_data = sampleinfo(sample.geneID)
+            scan_id = sample_data.sample_name
+        Else
+            scan_id = sample.geneID
+        End If
+
+        s1 = New ScanMS1 With {
+            .mz = mzi.ToArray,
+            .BPC = into.Max,
+            .into = into.ToArray,
+            .rt = t,
+            .TIC = expression.Sum,
+            .scan_id = $"[MS1] {scan_id}, { .mz.Length} ions; total_ions={ .into.Sum.ToString("G3")}, basePeak={ .into.Max.ToString("G3")}, basePeak_m/z={ .mz(which.Max(.into)).ToString("F3")}"
+        }
+
+        If spatial Then
+            Dim xyz As String() = sample.geneID.Split(","c)
+
+            s1.meta = New Dictionary(Of String, String)
+            s1.meta.Add("x", xyz(0))
+            s1.meta.Add("y", xyz(1))
+
+            If xyz.Length > 2 Then
+                s1.meta.Add("z", xyz(2))
+            End If
+        End If
+        If Not sample_data Is Nothing Then
+            If s1.meta Is Nothing Then
+                s1.meta = New Dictionary(Of String, String)
+            End If
+
+            s1.meta("sample") = sample_data.sample_info
+        End If
+
+        Return s1
     End Function
 End Module

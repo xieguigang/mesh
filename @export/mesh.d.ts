@@ -15,6 +15,8 @@ declare namespace mesh {
        * 
        * 
         * @param expr1 -
+        * @param mesh 
+        * + default value Is ``null``.
         * @param q -
         * 
         * + default value Is ``0.7``.
@@ -28,7 +30,7 @@ declare namespace mesh {
         * 
         * + default value Is ``null``.
       */
-      function mzPack(expr1: object, q?: number, rt_range?: any, spatial?: boolean, env?: object): object;
+      function mzPack(expr1: object, mesh?: object, q?: number, rt_range?: any, spatial?: boolean, env?: object): object;
    }
    /**
     * Generate the metabolomics expression matrix object
@@ -83,9 +85,18 @@ declare namespace mesh {
    function metabolites(mesh: object, metabolites: object, adducts: any, env?: object): object;
    module samples {
       /**
-        * @param env default value Is ``null``.
+       * Create a spatial sample via the given raster matrix
+       * 
+       * 
+        * @param mesh -
+        * @param raster -
+        * @param label 
+        * + default value Is ``null``.
+        * @param env -
+        * 
+        * + default value Is ``null``.
       */
-      function raster(mesh: object, raster: object, env?: object): any;
+      function raster(mesh: object, raster: object, label?: any, env?: object): any;
       /**
        * Set spatial id
        * 
@@ -93,14 +104,17 @@ declare namespace mesh {
         * @param mesh -
         * @param x -
         * @param y -
-        * @param z 
+        * @param z z axis of the spatial spot
+        * 
         * + default value Is ``null``.
         * @param kernel 
+        * + default value Is ``null``.
+        * @param group 
         * + default value Is ``null``.
         * @param env -
         * 
         * + default value Is ``null``.
       */
-      function spatial(mesh: object, x: any, y: any, z?: any, kernel?: any, env?: object): any;
+      function spatial(mesh: object, x: any, y: any, z?: any, kernel?: any, group?: any, env?: object): any;
    }
 }
