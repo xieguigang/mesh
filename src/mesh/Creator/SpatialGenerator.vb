@@ -57,7 +57,7 @@ Public Class SpatialGenerator : Inherits Generator
             Dim mu As Double = kernel(++i)
             Dim sigma As Double = randf.NextGaussian(mu:=std.Exp(Val(spot.color) / max))
             Dim sample_data As Vector = pnorm.ProbabilityDensity(x, mu, sigma)
-            Dim various As Vector = MathGamma.gamma(Vector.rand(args.featureSize) * v_factor) / 2.31
+            Dim various As Vector = MathGamma.gamma(Vector.rand(min:=-3, max:=3, args.featureSize) * v_factor) / 2.31
 
             sample_data = sample_data + various
 
@@ -65,7 +65,7 @@ Public Class SpatialGenerator : Inherits Generator
                 Call VBDebugger.EchoLine($"  * [{((i / sample_group.Length) * 100).ToString("F2")}%, {(Now - t0).FormatTime}] {spot.sample_name}...")
             End If
 
-            Yield sample_data
+            Yield sample_data * args.intensity_max
         Next
     End Function
 End Class

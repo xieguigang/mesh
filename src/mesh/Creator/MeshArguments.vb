@@ -19,6 +19,12 @@ Public Class MeshArguments
     Public Property intensity_max As Double = 10 ^ 15
 
     ''' <summary>
+    ''' is spatial data?
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property spatial As Boolean = False
+
+    ''' <summary>
     ''' A vector of the sample labels to generates the matrix
     ''' [sample observes]
     ''' </summary>

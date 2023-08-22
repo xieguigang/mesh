@@ -202,8 +202,17 @@ Public Module Rscript
                           Optional mzpack As Boolean = False,
                           Optional q As Double = 0.7,
                           Optional spatial As Boolean = False) As Object
+
+        Dim sim As Generator
+
+        If mesh.spatial Then
+            sim = New SpatialGenerator(mesh)
+        Else
+            sim = New Generator(mesh)
+        End If
+
         If mzpack Then
-            Return New Generator(mesh) _
+            Return sim _
                 .GetExpressionMatrix _
                 .toMzPack(
                     spatial:=spatial,
@@ -211,7 +220,7 @@ Public Module Rscript
                     q:=q
                 )
         Else
-            Return New Generator(mesh).GetExpressionMatrix
+            Return sim.GetExpressionMatrix
         End If
     End Function
 
