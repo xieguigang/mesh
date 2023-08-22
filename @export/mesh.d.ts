@@ -92,11 +92,13 @@ declare namespace mesh {
         * @param raster -
         * @param label 
         * + default value Is ``null``.
+        * @param kernel_cutoff 
+        * + default value Is ``1E-05``.
         * @param env -
         * 
         * + default value Is ``null``.
       */
-      function raster(mesh: object, raster: object, label?: any, env?: object): any;
+      function raster(mesh: object, raster: object, label?: any, kernel_cutoff?: number, env?: object): any;
       /**
        * Set spatial id
        * 
