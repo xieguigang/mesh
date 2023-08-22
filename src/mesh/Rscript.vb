@@ -134,6 +134,7 @@ Public Module Rscript
     Public Function samplesRaster(mesh As MeshArguments, raster As RasterScaler,
                                   <RRawVectorArgument>
                                   Optional label As Object = Nothing,
+                                  Optional kernel_cutoff As Double = 0.00001,
                                   Optional env As Environment = Nothing) As Object
 
         Dim pixels As PixelData() = raster.GetRasterData.ToArray
@@ -143,7 +144,7 @@ Public Module Rscript
         Dim labels As String() = CLRVector.asCharacter(label)
 
         kernels = kernels / kernels.Max
-        kernels(kernels < 1) = Vector.Zero
+        kernels(kernels < kernel_cutoff) = Vector.Zero
 
         mesh.setSpatialSamples(x, y, kernel:=kernels, group:=labels, env:=env)
         mesh.kernel = kernels
