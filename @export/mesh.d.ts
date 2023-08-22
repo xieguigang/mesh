@@ -115,10 +115,12 @@ declare namespace mesh {
         * + default value Is ``null``.
         * @param group 
         * + default value Is ``null``.
+        * @param template 
+        * + default value Is ``'[raster-%y.raw] [MS1][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]'``.
         * @param env -
         * 
         * + default value Is ``null``.
       */
-      function spatial(mesh: object, x: any, y: any, z?: any, kernel?: any, group?: any, env?: object): any;
+      function spatial(mesh: object, x: any, y: any, z?: any, kernel?: any, group?: any, template?: string, env?: object): any;
    }
 }

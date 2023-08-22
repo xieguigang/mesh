@@ -10,7 +10,7 @@ setwd(@dir);
 
 let mesh = mesh(
     mass.range = [50, 2000], 
-    feature.size = 100, 
+    feature.size = 125, 
     mzdiff = 0.005);
 let raster = as.raster(readImage(`../../docs\Visualize-Metabolic-Process-at-the-Single-Cell-Level.png`)); 
 
@@ -20,6 +20,6 @@ dev.off();
 
 samples.raster(mesh, raster);
 
-let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE);
+let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE, q= 0.5);
 
 write.mzPack(pack, file = `demo_singlecells.mzPack`, version = 2);

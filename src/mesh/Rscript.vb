@@ -37,7 +37,7 @@ Public Module Rscript
                              Optional mass_range As Object = "50,1200",
                              Optional feature_size As Integer = 10000,
                              Optional mzdiff As Double = 0.005,
-                             Optional intensity_max As Double = 1.0E+15,
+                             Optional intensity_max As Double = 100000000000000.0,
                              Optional env As Environment = Nothing) As MeshArguments
 
         Dim range As Double() = CLRVector.asNumeric(mass_range)
