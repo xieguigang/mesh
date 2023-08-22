@@ -145,7 +145,7 @@ Public Module Rscript
         kernels = kernels / kernels.Max
         kernels(kernels < 1) = Vector.Zero
 
-        mesh.setSpatialSamples(x, y, group:=labels, env:=env)
+        mesh.setSpatialSamples(x, y, kernel:=kernels, group:=labels, env:=env)
         mesh.kernel = kernels
 
         Return mesh
