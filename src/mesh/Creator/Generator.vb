@@ -120,21 +120,17 @@ Public Class Generator
                 Call VBDebugger.EchoLine($"  * [{((i / sample_group.Length) * 100).ToString("F2")}%, {(Now - t0).FormatTime}] {sample.sample_name}...")
             End If
 
-            If kernel <= 0.0 Then
-                Yield mean_of_group * 0.0
-            Else
-                delta = various _
-                    .Select(Function(x) randf.NextDouble(-x, x)) _
-                    .AsVector
+            delta = various _
+                .Select(Function(x) randf.NextDouble(-x, x)) _
+                .AsVector
 
-                sample_data = mean_of_group * kernel + delta
-                sample_data(sample_data < 10) = zero
-                ' sample_data = sample_data.Log
-                ' sample_data(sample_data < 1) = Vector.Zero
-                sample_data = sample_data * args.intensity_max
+            sample_data = mean_of_group * kernel + delta
+            sample_data(sample_data < 1) = zero
+            ' sample_data = sample_data.Log
+            ' sample_data(sample_data < 1) = Vector.Zero
+            sample_data = sample_data * args.intensity_max
 
-                Yield sample_data
-            End If
+            Yield sample_data
         Next
     End Function
 End Class
