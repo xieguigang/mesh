@@ -148,8 +148,9 @@ Public Module Rscript
         Dim kernels As Vector = pixels.Select(Function(p) p.Scale).AsVector
         Dim labels As String() = CLRVector.asCharacter(label)
 
-        kernel_cutoff = std.Exp(kernel_cutoff * 2) ^ 2
-        kernels = ((kernels / kernels.Max) * 2).Exp ^ 2
+        ' kernel_cutoff = std.Exp(kernel_cutoff * 2) ^ 2
+        ' kernels = ((kernels / kernels.Max) * 2).Exp ^ 2
+        kernels = kernels / kernels.Max
         kernels(kernels < kernel_cutoff) = Vector.Zero
 
         mesh.setSpatialSamples(x, y, kernel:=kernels, group:=labels, env:=env)

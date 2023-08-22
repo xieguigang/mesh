@@ -134,8 +134,7 @@ Public Class Generator
 
             delta = various _
                 .Select(Function(x) randf.NextDouble(-x, x)) _
-                .AsVector _
-                .Z
+                .AsVector
 
             sample_data = mean_of_group * kernel + delta
             sample_data(sample_data < 0) = zero
