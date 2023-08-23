@@ -40,7 +40,7 @@ rasterHeatmap(raster);
 dev.off();
 
 # samples.raster(mesh, raster, label = labels);
-samples.raster(mesh, raster);
+samples.raster(mesh, raster,linear.kernel = TRUE);
 
 let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE, q = 0);
 

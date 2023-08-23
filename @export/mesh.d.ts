@@ -96,11 +96,13 @@ declare namespace mesh {
         * + default value Is ``null``.
         * @param kernel_cutoff 
         * + default value Is ``0.0001``.
+        * @param linear_kernel 
+        * + default value Is ``false``.
         * @param env -
         * 
         * + default value Is ``null``.
       */
-      function raster(mesh: object, raster: object, label?: any, kernel_cutoff?: number, env?: object): any;
+      function raster(mesh: object, raster: object, label?: any, kernel_cutoff?: number, linear_kernel?: boolean, env?: object): any;
       /**
        * Set spatial id
        * 
@@ -117,10 +119,12 @@ declare namespace mesh {
         * + default value Is ``null``.
         * @param template 
         * + default value Is ``'[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]'``.
+        * @param linear_kernel 
+        * + default value Is ``false``.
         * @param env -
         * 
         * + default value Is ``null``.
       */
-      function spatial(mesh: object, x: any, y: any, z?: any, kernel?: any, group?: any, template?: string, env?: object): any;
+      function spatial(mesh: object, x: any, y: any, z?: any, kernel?: any, group?: any, template?: string, linear_kernel?: boolean, env?: object): any;
    }
 }

@@ -315,9 +315,8 @@ Public Module Rscript
         End If
 
         Dim i = expression > cut
-        Dim mzi As Vector = mz(i)
-        Dim into As Vector = expression(i)
-
+        Dim mzi = mz(i)
+        Dim into = expression(i)
         Dim scan_id As String
         Dim sample_data As SampleInfo = Nothing
         Dim s1 As ScanMS1
