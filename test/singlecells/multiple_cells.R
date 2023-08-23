@@ -16,15 +16,15 @@ let mesh = mesh(
     mzdiff = 0.005);
 let raster = as.raster(readImage(`../../docs\104_A10_1_blue_red_green.jpg`)); 
 
-let labels = raster_vec(raster);
-# let gmm = clustering::gmm(labels, components = 6);
-# let gauss = gmm.predict_proba(gmm);
+# let labels = raster_vec(raster);
+# # let gmm = clustering::gmm(labels, components = 6);
+# # let gauss = gmm.predict_proba(gmm);
 
-print(labels);
+# print(labels);
 
-labels = q_factors(labels, levels = 9);
+# labels = q_factors(labels, levels = 9);
 
-print(labels);
+# print(labels);
 
 # labels = gmm.predict(gmm);
 
@@ -39,8 +39,9 @@ bitmap(file = "./raster_multiple1.png", size = [1920, 1920]);
 rasterHeatmap(raster);
 dev.off();
 
-samples.raster(mesh, raster, label = labels);
+# samples.raster(mesh, raster, label = labels);
+samples.raster(mesh, raster);
 
-let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE, q = 0.5);
+let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE, q = 0);
 
 write.mzPack(pack, file = `singlecells-multiple.mzPack`, version = 2);

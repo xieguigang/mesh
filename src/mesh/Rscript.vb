@@ -299,12 +299,17 @@ Public Module Rscript
                                      mz As Vector,
                                      sampleinfo As Dictionary(Of String, SampleInfo)) As ScanMS1
 
-        Dim quantile As QuantileEstimationGK = sample.experiments.GKQuantile
-        Dim cut As Double = quantile.Query(q)
         Dim expression As New Vector(sample.experiments)
+        Dim cut As Double = 0
+
+        If q > 0 Then
+            cut = sample.experiments.GKQuantile.Query(q)
+        End If
+
         Dim i = expression > cut
-        Dim mzi = mz(i)
-        Dim into = expression(i)
+        Dim mzi As Vector = mz(i)
+        Dim into As Vector = expression(i)
+
         Dim scan_id As String
         Dim sample_data As SampleInfo = Nothing
         Dim s1 As ScanMS1
