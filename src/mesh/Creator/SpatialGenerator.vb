@@ -3,8 +3,6 @@ Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Math.Distributions
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
-Imports randf = Microsoft.VisualBasic.Math.RandomExtensions
-Imports std = System.Math
 
 Public Class SpatialGenerator : Inherits Generator
 
@@ -54,8 +52,11 @@ Public Class SpatialGenerator : Inherits Generator
         End If
 
         x = (x / x.Max).Z
-        kernel = (kernel / kernel.Max * 2).Exp
-        ' kernel = New Vector(kernel.OrderByDescending(Function(ki) ki))
+        kernel = (kernel / kernel.Max) * 2
+
+        If Not args.linear_kernel Then
+            kernel = kernel.Exp
+        End If
 
         For Each spot As SampleInfo In sample_group
             Dim scale As Double = Val(spot.color)

@@ -94,6 +94,7 @@ Public Module Rscript
                                       <RRawVectorArgument>
                                       Optional group As Object = Nothing,
                                       Optional template As String = "[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]",
+                                      Optional linear_kernel As Boolean = False,
                                       Optional env As Environment = Nothing) As Object
 
         Dim xi As Integer() = CLRVector.asInteger(x)
@@ -126,6 +127,7 @@ Public Module Rscript
         End If
 
         mesh.spatial = True
+        mesh.linear_kernel = linear_kernel
 
         Return mesh.setSamples(sampleinfo, env)
     End Function
@@ -142,6 +144,7 @@ Public Module Rscript
                                   <RRawVectorArgument>
                                   Optional label As Object = Nothing,
                                   Optional kernel_cutoff As Double = 0.0001,
+                                  Optional linear_kernel As Boolean = False,
                                   Optional env As Environment = Nothing) As Object
 
         Dim pixels As PixelData() = raster.GetRasterData.ToArray
@@ -150,13 +153,18 @@ Public Module Rscript
         Dim kernels As Vector = pixels.Select(Function(p) p.Scale).AsVector
         Dim labels As String() = CLRVector.asCharacter(label)
 
-        ' kernel_cutoff = std.Exp(kernel_cutoff * 2) ^ 2
-        ' kernels = ((kernels / kernels.Max) * 2).Exp ^ 2
         kernels = kernels / kernels.Max
         kernels(kernels < kernel_cutoff) = Vector.Zero
 
-        mesh.setSpatialSamples(x, y, kernel:=kernels, group:=labels, env:=env)
+        mesh.setSpatialSamples(
+            x, y,
+            kernel:=kernels,
+            group:=labels,
+            env:=env,
+            linear_kernel:=linear_kernel
+        )
         mesh.kernel = kernels
+        mesh.linear_kernel = linear_kernel
 
         Return mesh
     End Function

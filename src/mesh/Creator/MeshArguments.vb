@@ -12,6 +12,8 @@ Public Class MeshArguments
     ''' <returns></returns>
     Public Property mass_range As Double() = {50, 1200}
     Public Property massdiff As Double = 0.005
+    Public Property linear_kernel As Boolean = False
+
     ''' <summary>
     ''' the intensity range conversion
     ''' </summary>
