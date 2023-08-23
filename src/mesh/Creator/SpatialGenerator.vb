@@ -1,4 +1,5 @@
-﻿Imports Microsoft.VisualBasic.Language
+﻿Imports Microsoft.VisualBasic.ComponentModel.Ranges.Model
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Math.Distributions
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
@@ -45,25 +46,28 @@ Public Class SpatialGenerator : Inherits Generator
         Dim i As i32 = 0
         Dim t0 As Date = Now
         Dim x As New Vector(Enumerable.Range(0, args.featureSize))
-        Dim max As Double = kernel.Max
+        Dim scale_range As New DoubleRange(kernel)
+        Dim index_select As New DoubleRange(0, args.featureSize - 1)
 
         If d = 0 Then
             d = 1
         End If
 
-        x = x / x.Max
+        x = (x / x.Max).Z
         kernel = (kernel / kernel.Max * 2).Exp
         ' kernel = New Vector(kernel.OrderByDescending(Function(ki) ki))
 
         For Each spot As SampleInfo In sample_group
-            Dim mu As Double = kernel(CInt(i))
-            Dim sigma As Double = randf.NextGaussian(mu:=std.Exp(Val(spot.color) / max))
+            Dim scale As Double = Val(spot.color)
+            Dim offset As Integer = scale_range.ScaleMapping(scale, index_select)
+            Dim mu As Double = x(offset)
+            Dim sigma As Double = kernel(CInt(i)) ' randf.NextGaussian(mu:=std.Exp(Val(spot.color) / max))
             Dim sample_data As Vector = pnorm.ProbabilityDensity(x, mu, sigma)
-            Dim various As Vector = MathGamma.gamma(Vector.rand(min:=-1.5, max:=1.5, args.featureSize) * v_factor) / 2.31
+            ' Dim various As Vector = MathGamma.gamma(Vector.rand(min:=-1.5, max:=1.5, args.featureSize) * v_factor) / 2.31
 
-            sample_data = sample_data * (1 / sample_data.Abs.Min)
-            sample_data = sample_data + various
-            sample_data(sample_data < 0) = zero
+            ' sample_data = sample_data * (1 / sample_data.Abs.Min)
+            ' sample_data = sample_data + various
+            ' sample_data(sample_data < 0) = zero
 
             If ++i Mod d = 0 Then
                 Call VBDebugger.EchoLine($"  * [{((i / sample_group.Length) * 100).ToString("F2")}%, {(Now - t0).FormatTime}] {spot.sample_name}...")
