@@ -14,13 +14,13 @@ let mesh = mesh(
     mass.range = [50, 2000], 
     feature.size = 100, 
     mzdiff = 0.005);
-let raster = as.raster(readImage(`../../docs\104_A10_1_blue_red_green.jpg`)); 
+let raster = as.raster(readImage(`../../docs\104_A10_1_blue_red_green.jpg`), rgb.stack = ["b","g", "r"]); 
 
-# let labels = raster_vec(raster);
+let labels = raster_vec(raster);
 # # let gmm = clustering::gmm(labels, components = 6);
 # # let gauss = gmm.predict_proba(gmm);
 
-# print(labels);
+print(labels);
 
 # labels = q_factors(labels, levels = 9);
 
