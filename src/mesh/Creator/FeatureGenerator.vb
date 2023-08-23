@@ -37,7 +37,7 @@ Public Class FeatureGenerator : Implements Enumeration(Of Double)
         For Each adduct As MzCalculator In args.adducts
             ion = adduct.CalcMZ(meta.ExactMass)
 
-            If checkIon(ion) Then
+            If MissingIon(ion) Then
                 ions.Add(ion)
                 Return ion
             End If
@@ -73,8 +73,11 @@ Public Class FeatureGenerator : Implements Enumeration(Of Double)
     ''' check mz is duplicated or not
     ''' </summary>
     ''' <param name="mz"></param>
-    ''' <returns></returns>
-    Private Function checkIon(mz As Double) As Boolean
+    ''' <returns>
+    ''' TRUE - means the given ion <paramref name="mz"/> is not exists in the current feature set
+    ''' FALSE - else means the given ion <paramref name="mz"/> is already exists in current feature set
+    ''' </returns>
+    Private Function MissingIon(mz As Double) As Boolean
         Return Not ions _
             .Any(Function(mzi)
                      Return stdNum.Abs(mzi - mz) <= args.massdiff
@@ -89,8 +92,10 @@ Public Class FeatureGenerator : Implements Enumeration(Of Double)
         Do While True
             Dim mz As Double = randf.GetRandomValue(mass_range)
             ' check mz is duplicated or not
-            Dim check As Boolean = checkIon(mz)
+            Dim check As Boolean = MissingIon(mz)
 
+            ' check = true means current mz is new ion
+            ' then we populate current new ion mz
             If check Then
                 ions.Add(mz)
                 Return mz
