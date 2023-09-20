@@ -46,7 +46,7 @@ names(compounds) = basename(files);
 
 str(compounds);
 
-stop();
+# stop();
 
 let mesh = mesh(
     mass.range = [50, 2000], 

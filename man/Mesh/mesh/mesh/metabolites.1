@@ -4,7 +4,7 @@
 metabolites \- Set metabolite features
 .SH SYNOPSIS
 \fImetabolites(\fBmesh\fR as <generic> MeshArguments, 
-\fBmetabolites\fR as <generic> MetaboliteAnnotation[], 
+\fBmetabolites\fR as any, 
 \fBadducts\fR as any, 
 [\fB<Environment>\fR]);\fR
 .SH DESCRIPTION
@@ -24,6 +24,9 @@ Set metabolite features
  2. name, 
  3. exact mass, 
  4. and formula data
+ 
+ this parameter value could be the annotation abstract model: @\fBT:BioNovoGene.BioDeep.Chemoinformatics.MetaboliteAnnotation\fR,
+ or the kegg compound model @\fBT:SMRUCC.genomics.Assembly.KEGG.DBGET.bGetObject.Compound\fR from the GCModeller package.
 . 
 .PP
 .PP
