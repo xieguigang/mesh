@@ -3,12 +3,20 @@ require(GCModeller);
 require(mzkit);
 require(graphics);
 require(graphics2D);
+require(HDS);
 
 imports "mzweb" from "mzkit";
 imports "clustering" from "MLkit";
 imports "dataset" from "MLkit";
 
 setwd(@dir);
+
+const kegg_db = HDS::openStream("\GCModeller\src\repository\graphquery\kegg\tools\cache.db", readonly = TRUE);
+const files = HDS::files(kegg_db);
+
+print(files);
+
+stop();
 
 let mesh = mesh(
     mass.range = [50, 2000], 
