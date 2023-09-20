@@ -15,11 +15,10 @@ Imports SMRUCC.genomics.Analysis.HTS.DataFrame
 Imports SMRUCC.genomics.Assembly.KEGG.DBGET.bGetObject
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
 Imports SMRUCC.Rsharp.Runtime
-Imports SMRUCC.Rsharp.Runtime.Internal.[Object]
 Imports SMRUCC.Rsharp.Runtime.Interop
 Imports SMRUCC.Rsharp.Runtime.Vectorization
+Imports pip = SMRUCC.Rsharp.Runtime.Internal.Object.pipeline
 Imports REnv = SMRUCC.Rsharp.Runtime
-Imports std = System.Math
 
 ''' <summary>
 ''' MSdata expression matrix simulator for metabolomics analysis pipeline development and test.
@@ -198,11 +197,11 @@ Public Module Rscript
                                    <RRawVectorArgument> adducts As Object,
                                    Optional env As Environment = Nothing) As Object
 
-        Dim list As pipeline = pipeline.TryCreatePipeline(Of MetaboliteAnnotation)(metabolites, env, suppress:=True)
+        Dim list As pip = pip.TryCreatePipeline(Of MetaboliteAnnotation)(metabolites, env, suppress:=True)
 
         If list.isError Then
             ' try kegg compound model
-            list = pipeline.TryCreatePipeline(Of Compound)(metabolites, env)
+            list = pip.TryCreatePipeline(Of Compound)(metabolites, env)
 
             If list.isError Then
                 Return list.getError
@@ -217,7 +216,7 @@ Public Module Rscript
                                 .Id = c.entry
                             }
                         End Function) _
-                .DoCall(AddressOf pipeline.CreateFromPopulator)
+                .DoCall(AddressOf pip.CreateFromPopulator)
         End If
 
         mesh.metabolites = list.populates(Of MetaboliteAnnotation)(env).ToArray
