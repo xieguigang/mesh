@@ -50,7 +50,7 @@ stop();
 
 let mesh = mesh(
     mass.range = [50, 2000], 
-    feature.size = 1000, 
+    feature.size = 200, 
     mzdiff = 0.005);
 let raster = as.raster(readImage(`../../docs\Visualize-Metabolic-Process-at-the-Single-Cell-Level.png`)); 
 
