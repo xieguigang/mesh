@@ -11,10 +11,40 @@ imports "dataset" from "MLkit";
 
 setwd(@dir);
 
-const kegg_db = HDS::openStream("\GCModeller\src\repository\graphquery\kegg\tools\cache.db", readonly = TRUE);
-const files = HDS::files(kegg_db);
+let kegg_db = HDS::openStream("\GCModeller\src\repository\graphquery\kegg\tools\cache.db", readonly = TRUE);
+let files = as.data.frame(HDS::files(kegg_db, dir = "/Metabolism/Energy metabolism/", recursive = TRUE));
+
+# print(as.data.frame(files));
+files = files[files$type == "dir", ];
+files = files[basename(files$path) == "compounds", ];
+
+# get all compounds
+files = lapply(files$path, function(dir) {
+    as.data.frame(HDS::files(kegg_db, dir = `${dir}/`, recursive = TRUE))$path;
+}) |> unlist();
+
+files = data.frame(files, name = basename(files));
+files = files |> groupBy("name") |> sapply(function(d) {
+    const list = (d$files);
+
+    if (length(list) == 1) {
+        list;
+    } else {
+        .Internal::first(list);
+    }
+});
 
 print(files);
+
+let compounds = lapply(files, function(path) {
+    try({
+        loadXml(HDS::getText(kegg_db, fileName = path), typeof = "kegg_compound");
+    });
+});
+
+names(compounds) = basename(files);
+
+str(compounds);
 
 stop();
 
@@ -39,7 +69,10 @@ bitmap(file = "./raster1.png", size = [1920, 1080]);
 rasterHeatmap(raster);
 dev.off();
 
-samples.raster(mesh, raster);
+mesh 
+|> samples.raster(raster)
+|> metabolites(metabolites = unlist(compounds),  adducts = ["[M+H]+","[M+Na]+"])
+;
 # samples.raster(mesh, raster, label = labels);
 
 let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE, q= 0.5);

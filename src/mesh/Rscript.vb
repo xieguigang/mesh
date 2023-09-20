@@ -3,6 +3,7 @@ Imports System.Runtime.CompilerServices
 Imports BioNovoGene.Analytical.MassSpectrometry.Assembly
 Imports BioNovoGene.Analytical.MassSpectrometry.Assembly.mzData.mzWebCache
 Imports BioNovoGene.BioDeep.Chemoinformatics
+Imports BioNovoGene.BioDeep.Chemoinformatics.Formula
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Imaging.Drawing2D.HeatMap
 Imports Microsoft.VisualBasic.Language
@@ -11,8 +12,10 @@ Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports Microsoft.VisualBasic.Math.Quantile
 Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports SMRUCC.genomics.Analysis.HTS.DataFrame
+Imports SMRUCC.genomics.Assembly.KEGG.DBGET.bGetObject
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
 Imports SMRUCC.Rsharp.Runtime
+Imports SMRUCC.Rsharp.Runtime.Internal.[Object]
 Imports SMRUCC.Rsharp.Runtime.Interop
 Imports SMRUCC.Rsharp.Runtime.Vectorization
 Imports REnv = SMRUCC.Rsharp.Runtime
@@ -181,6 +184,9 @@ Public Module Rscript
     ''' 2. name, 
     ''' 3. exact mass, 
     ''' 4. and formula data
+    ''' 
+    ''' this parameter value could be the annotation abstract model: <see cref="MetaboliteAnnotation"/>,
+    ''' or the kegg compound model <see cref="Compound"/> from the GCModeller package.
     ''' </param>
     ''' <param name="adducts"></param>
     ''' <param name="env"></param>
@@ -188,11 +194,33 @@ Public Module Rscript
     <ExportAPI("metabolites")>
     <RApiReturn(GetType(MeshArguments))>
     Public Function setMetabolites(mesh As MeshArguments,
-                                   metabolites As MetaboliteAnnotation(),
-                                   <RRawVectorArgument>
-                                   adducts As Object,
+                                   <RRawVectorArgument> metabolites As Object,
+                                   <RRawVectorArgument> adducts As Object,
                                    Optional env As Environment = Nothing) As Object
-        mesh.metabolites = metabolites
+
+        Dim list As pipeline = pipeline.TryCreatePipeline(Of MetaboliteAnnotation)(metabolites, env, suppress:=True)
+
+        If list.isError Then
+            ' try kegg compound model
+            list = pipeline.TryCreatePipeline(Of Compound)(metabolites, env)
+
+            If list.isError Then
+                Return list.getError
+            End If
+
+            list = list.populates(Of Compound)(env) _
+                .Select(Function(c)
+                            Return New MetaboliteAnnotation With {
+                                .CommonName = c.commonNames.DefaultFirst(c.entry),
+                                .ExactMass = FormulaScanner.EvaluateExactMass(c.formula),
+                                .Formula = c.formula,
+                                .Id = c.entry
+                            }
+                        End Function) _
+                .DoCall(AddressOf pipeline.CreateFromPopulator)
+        End If
+
+        mesh.metabolites = list.populates(Of MetaboliteAnnotation)(env).ToArray
         mesh.adducts = Math.GetPrecursorTypes(adducts, env)
         Return mesh
     End Function
