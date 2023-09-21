@@ -148,7 +148,6 @@ Public Module Rscript
                                   Optional label As Object = Nothing,
                                   Optional kernel_cutoff As Double = 0.0001,
                                   Optional linear_kernel As Boolean = False,
-                                  Optional TrIQ As Double = 0.85,
                                   Optional env As Environment = Nothing) As Object
 
         Dim pixels As PixelData() = raster.GetRasterData.ToArray
@@ -156,9 +155,9 @@ Public Module Rscript
         Dim y As Integer() = pixels.Select(Function(p) p.Y).ToArray
         Dim kernels As Vector = pixels.Select(Function(p) p.Scale).AsVector
         Dim labels As String() = CLRVector.asCharacter(label)
-        Dim trim As Double = kernels.FindThreshold(q:=TrIQ)
+        ' Dim trim As Double = kernels.FindThreshold(q:=TrIQ)
 
-        kernels(kernels > trim) = Vector.Scalar(trim)
+        ' kernels(kernels > trim) = Vector.Scalar(trim)
         kernels = kernels / kernels.Max
         kernels(kernels < kernel_cutoff) = Vector.Zero
 

@@ -101,13 +101,11 @@ declare namespace mesh {
         * + default value Is ``0.0001``.
         * @param linear_kernel 
         * + default value Is ``false``.
-        * @param TrIQ 
-        * + default value Is ``0.85``.
         * @param env -
         * 
         * + default value Is ``null``.
       */
-      function raster(mesh: object, raster: object, label?: any, kernel_cutoff?: number, linear_kernel?: boolean, TrIQ?: number, env?: object): any;
+      function raster(mesh: object, raster: object, label?: any, kernel_cutoff?: number, linear_kernel?: boolean, env?: object): any;
       /**
        * Set spatial id
        * 
