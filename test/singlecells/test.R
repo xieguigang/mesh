@@ -12,7 +12,8 @@ imports "dataset" from "MLkit";
 setwd(@dir);
 
 let kegg_db = HDS::openStream("\GCModeller\src\repository\graphquery\kegg\tools\cache.db", readonly = TRUE);
-let files = as.data.frame(HDS::files(kegg_db, dir = "/Metabolism/Energy metabolism/", recursive = TRUE));
+let files = as.data.frame(HDS::files(kegg_db, 
+dir = "/Metabolism/Energy metabolism/", recursive = TRUE));
 
 # print(as.data.frame(files));
 files = files[files$type == "dir", ];
