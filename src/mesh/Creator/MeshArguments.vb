@@ -1,5 +1,6 @@
 ﻿Imports BioNovoGene.Analytical.MassSpectrometry.Math.Ms1.PrecursorType
 Imports BioNovoGene.BioDeep.Chemoinformatics
+Imports BioNovoGene.BioDeep.Chemoinformatics.Formula
 Imports SMRUCC.genomics.Analysis.HTS.DataFrame
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
 
@@ -59,6 +60,7 @@ Public Class MeshArguments
     ''' the order of the adducts will affects the generated ion feature set
     ''' </remarks>
     Public Property adducts As MzCalculator()
+    Public Property opts As SearchOption
 
     Public Function CreateMatrix() As Matrix
         Return New Generator(Me).GetExpressionMatrix

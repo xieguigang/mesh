@@ -54,8 +54,37 @@ Public Module Rscript
             .featureSize = feature_size,
             .massdiff = mzdiff,
             .intensity_max = intensity_max,
-            .adducts = precursors
+            .adducts = precursors,
+            .opts = SearchOption.SmallMolecule(DNPOrWileyType.Wiley, True)
         }
+    End Function
+
+    <ExportAPI("formula")>
+    Public Function formulaGenerator(mesh As MeshArguments,
+                                     <RRawVectorArgument(GetType(Double))> Optional C As Object = "1,9",
+                                     <RRawVectorArgument(GetType(Double))> Optional H As Object = "0,60",
+                                     <RRawVectorArgument(GetType(Double))> Optional O As Object = "0,18",
+                                     <RRawVectorArgument(GetType(Double))> Optional N As Object = "0,10",
+                                     <RRawVectorArgument(GetType(Double))> Optional P As Object = "0,8",
+                                     <RRawVectorArgument(GetType(Double))> Optional S As Object = "0,8",
+                                     <RRawVectorArgument(GetType(Double))> Optional F As Object = "0,15",
+                                     <RRawVectorArgument(GetType(Double))> Optional Cl As Object = "0,8",
+                                     <RRawVectorArgument(GetType(Double))> Optional Br As Object = "0,5",
+                                     <RRawVectorArgument(GetType(Double))> Optional Si As Object = "0,8") As MeshArguments
+
+        mesh.opts = New SearchOption(Short.MinValue, Short.MaxValue) _
+            .AddElement("C", CLRVector.asInteger(C)) _
+            .AddElement("H", CLRVector.asInteger(H)) _
+            .AddElement("O", CLRVector.asInteger(O)) _
+            .AddElement("N", CLRVector.asInteger(N)) _
+            .AddElement("P", CLRVector.asInteger(P)) _
+            .AddElement("S", CLRVector.asInteger(S)) _
+            .AddElement("F", CLRVector.asInteger(F)) _
+            .AddElement("Cl", CLRVector.asInteger(Cl)) _
+            .AddElement("Br", CLRVector.asInteger(Br)) _
+            .AddElement("Si", CLRVector.asInteger(Si))
+
+        Return mesh
     End Function
 
     ''' <summary>
