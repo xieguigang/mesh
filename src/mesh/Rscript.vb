@@ -408,9 +408,10 @@ Public Module Rscript
         If spatial Then
             Dim xyz As String() = sample.geneID.Split(","c)
 
-            s1.meta = New Dictionary(Of String, String)
-            s1.meta.Add("x", xyz(0))
-            s1.meta.Add("y", xyz(1))
+            s1.meta = New Dictionary(Of String, String) From {
+                {"x", xyz(0)},
+                {"y", xyz(1)}
+            }
 
             If xyz.Length > 2 Then
                 s1.meta.Add("z", xyz(2))
