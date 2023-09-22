@@ -114,6 +114,8 @@ Public Class FeatureGenerator : Implements Enumeration(Of Double)
         Throw New InvalidDataException("this error will never happends!")
     End Function
 
+
+
     Public Iterator Function GenericEnumerator() As IEnumerator(Of Double) Implements Enumeration(Of Double).GenericEnumerator
         For Each ion As Double In ions
             Yield ion

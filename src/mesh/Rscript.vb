@@ -2,6 +2,7 @@
 Imports System.Runtime.CompilerServices
 Imports BioNovoGene.Analytical.MassSpectrometry.Assembly
 Imports BioNovoGene.Analytical.MassSpectrometry.Assembly.mzData.mzWebCache
+Imports BioNovoGene.Analytical.MassSpectrometry.Math.Ms1.PrecursorType
 Imports BioNovoGene.BioDeep.Chemoinformatics
 Imports BioNovoGene.BioDeep.Chemoinformatics.Formula
 Imports Microsoft.VisualBasic.CommandLine.Reflection
@@ -40,16 +41,20 @@ Public Module Rscript
                              Optional mass_range As Object = "50,1200",
                              Optional feature_size As Integer = 10000,
                              Optional mzdiff As Double = 0.005,
+                             <RRawVectorArgument(GetType(String))>
+                             Optional adducts As Object = "[M+H]+|[M+Na]+|[M+K]+|[M+NH4]+|[M+H2O+H]+|[M-H2O+H]+",
                              Optional intensity_max As Double = 100000000.0,
                              Optional env As Environment = Nothing) As MeshArguments
 
         Dim range As Double() = CLRVector.asNumeric(mass_range)
+        Dim precursors As MzCalculator() = Math.GetPrecursorTypes(adducts, env)
 
         Return New MeshArguments With {
             .mass_range = range,
             .featureSize = feature_size,
             .massdiff = mzdiff,
-            .intensity_max = intensity_max
+            .intensity_max = intensity_max,
+            .adducts = precursors
         }
     End Function
 
@@ -196,7 +201,8 @@ Public Module Rscript
     <RApiReturn(GetType(MeshArguments))>
     Public Function setMetabolites(mesh As MeshArguments,
                                    <RRawVectorArgument> metabolites As Object,
-                                   <RRawVectorArgument> adducts As Object,
+                                   <RRawVectorArgument(GetType(String))>
+                                   Optional adducts As Object = "[M+H]+|[M+Na]+|[M+K]+|[M+NH4]+|[M+H2O+H]+|[M-H2O+H]+",
                                    Optional env As Environment = Nothing) As Object
 
         Dim list As pip = pip.TryCreatePipeline(Of MetaboliteAnnotation)(metabolites, env, suppress:=True)
