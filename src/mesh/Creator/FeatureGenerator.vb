@@ -1,9 +1,11 @@
 ﻿Imports System.IO
 Imports BioNovoGene.Analytical.MassSpectrometry.Math.Ms1.PrecursorType
 Imports BioNovoGene.BioDeep.Chemoinformatics
+Imports BioNovoGene.BioDeep.Chemoinformatics.Formula
 Imports Microsoft.VisualBasic.ComponentModel.Ranges.Model
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
+Imports opts = BioNovoGene.BioDeep.Chemoinformatics.Formula.SearchOption
 Imports randf = Microsoft.VisualBasic.Math.RandomExtensions
 Imports stdNum = System.Math
 
@@ -15,6 +17,7 @@ Public Class FeatureGenerator : Implements Enumeration(Of Double)
     ReadOnly args As MeshArguments
     ReadOnly ions As List(Of Double)
     ReadOnly mass_range As DoubleRange
+    ReadOnly opts As opts
 
     Sub New(args As MeshArguments)
         Me.ions = New List(Of Double)
@@ -99,7 +102,7 @@ Public Class FeatureGenerator : Implements Enumeration(Of Double)
     ''' <returns></returns>
     Private Function getIon() As Double
         Do While True
-            Dim mz As Double = randf.GetRandomValue(mass_range)
+            Dim mz As Double = CreateFormula()
             ' check mz is duplicated or not
             Dim check As Boolean = MissingIon(mz)
 
@@ -114,7 +117,31 @@ Public Class FeatureGenerator : Implements Enumeration(Of Double)
         Throw New InvalidDataException("this error will never happends!")
     End Function
 
+    Private Function CreateFormula() As Double
+        Do While True
+            Dim counts As New Dictionary(Of String, Integer)
 
+            For Each element In opts.candidateElements
+                counts(element.Element) = randf.NextDouble(element.MinCount, element.MaxCount)
+            Next
+
+            Dim f As New Formula(counts)
+
+            For Each type As MzCalculator In args.adducts
+                Dim mz As Double = type.CalcMZ(f.ExactMass)
+
+                If mass_range.IsInside(mz) Then
+                    If SevenGoldenRulesCheck.Check(f, True, CoverRange.CommonRange, True) Then
+                        Return mz
+                    Else
+                        Exit For
+                    End If
+                End If
+            Next
+        Loop
+
+        Throw New NotImplementedException("this error will never happened!")
+    End Function
 
     Public Iterator Function GenericEnumerator() As IEnumerator(Of Double) Implements Enumeration(Of Double).GenericEnumerator
         For Each ion As Double In ions
