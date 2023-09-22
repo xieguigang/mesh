@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Runtime.CompilerServices
 Imports BioNovoGene.Analytical.MassSpectrometry.Math.Ms1.PrecursorType
 Imports BioNovoGene.BioDeep.Chemoinformatics
 Imports BioNovoGene.BioDeep.Chemoinformatics.Formula
@@ -90,6 +91,8 @@ Public Class FeatureGenerator : Implements Enumeration(Of Double)
     ''' TRUE - means the given ion <paramref name="mz"/> is not exists in the current feature set
     ''' FALSE - else means the given ion <paramref name="mz"/> is already exists in current feature set
     ''' </returns>
+    ''' 
+    <MethodImpl(MethodImplOptions.AggressiveInlining)>
     Private Function MissingIon(mz As Double) As Boolean
         Return Not ions _
             .Any(Function(mzi)
