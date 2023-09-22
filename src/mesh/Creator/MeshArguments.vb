@@ -1,4 +1,5 @@
-﻿Imports BioNovoGene.Analytical.MassSpectrometry.Math.Ms1.PrecursorType
+﻿Imports System.Runtime.CompilerServices
+Imports BioNovoGene.Analytical.MassSpectrometry.Math.Ms1.PrecursorType
 Imports BioNovoGene.BioDeep.Chemoinformatics
 Imports BioNovoGene.BioDeep.Chemoinformatics.Formula
 Imports SMRUCC.genomics.Analysis.HTS.DataFrame
@@ -62,6 +63,7 @@ Public Class MeshArguments
     Public Property adducts As MzCalculator()
     Public Property opts As SearchOption
 
+    <MethodImpl(MethodImplOptions.AggressiveInlining)>
     Public Function CreateMatrix() As Matrix
         Return New Generator(Me).GetExpressionMatrix
     End Function
