@@ -7,6 +7,9 @@ Imports Microsoft.VisualBasic.Linq
 Imports randf = Microsoft.VisualBasic.Math.RandomExtensions
 Imports stdNum = System.Math
 
+''' <summary>
+''' generates the metabolite ions feature m/z set
+''' </summary>
 Public Class FeatureGenerator : Implements Enumeration(Of Double)
 
     ReadOnly args As MeshArguments
@@ -37,13 +40,17 @@ Public Class FeatureGenerator : Implements Enumeration(Of Double)
         For Each adduct As MzCalculator In args.adducts
             ion = adduct.CalcMZ(meta.ExactMass)
 
+            If Not mass_range.IsInside(ion) Then
+                Continue For
+            End If
+
             If MissingIon(ion) Then
                 ions.Add(ion)
                 Return ion
             End If
         Next
 
-        Return ion
+        Return -1
     End Function
 
     ''' <summary>
@@ -56,9 +63,11 @@ Public Class FeatureGenerator : Implements Enumeration(Of Double)
 
         For Each meta As MetaboliteAnnotation In args.metabolites.SafeQuery
             ion = getIon(meta)
-            features -= 1
 
-            Yield ion
+            If mass_range.IsInside(ion) Then
+                features -= 1
+                Yield ion
+            End If
         Next
 
         Do While features > 0
