@@ -63,7 +63,7 @@ Public Class SpatialGenerator : Inherits Generator
             Dim scale As Double = Val(spot.color)
             Dim offset As Integer = scale_range.ScaleMapping(scale, index_select)
             Dim mu As Double = x(offset)
-            Dim sigma As Double = kernel(CInt(i)) * (3 * randf.NextDouble)
+            Dim sigma As Double = kernel(CInt(i))
             Dim sample_data As Vector = pnorm.ProbabilityDensity(x, mu, sigma)
 
             sample_data += sample_data * Vector.rand(-0.5, 0.5, sample_data.Dim)
