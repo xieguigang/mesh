@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Create a mesh argument for run metabolomics expression matrix simulation</title>
+    <title>formula</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <style rel="stylesheet" type="text/css">
@@ -148,43 +148,37 @@
 
         <table style="width: 100%;">
             <tr>
-                <td>mesh {mesh}</td>
+                <td>formula {mesh}</td>
                 <td style="text-align: right;">R Documentation</td>
             </tr>
         </table>
 
-        <h2>Create a mesh argument for run metabolomics expression matrix simulation</h2>
+        <h2>formula</h2>
 
         <h3>Description</h3>
 
-        
+        formula
 
         <h3>Usage</h3>
 
         <div style="width: 100%; padding-left: 3%; color: black;">
-            <pre><code class='language-R' style="color: black; font-weight:normal;"><strong>mesh</strong>(
-    <i>mass.range</i> = [50,1200],
-    <i>feature.size</i> = <span style='color: green;'>10000</span>,
-    <i>mzdiff</i> = <span style='color: green;'>0.005</span>,
-    <i>adducts</i> = ["[M+H]+","[M+Na]+","[M+K]+","[M+NH4]+","[M+H2O+H]+","[M-H2O+H]+"],
-    <i>intensity.max</i> = <span style='color: green;'>100000000</span>);</code></pre>
+            <pre><code class='language-R' style="color: black; font-weight:normal;"><strong>formula</strong>(<i>mesh</i>,
+    <i>C</i> = [1,9],
+    <i>H</i> = [0,60],
+    <i>O</i> = [0,18],
+    <i>N</i> = [0,10],
+    <i>P</i> = [0,8],
+    <i>S</i> = [0,8],
+    <i>F</i> = [0,15],
+    <i>Cl</i> = [0,8],
+    <i>Br</i> = [0,5],
+    <i>Si</i> = [0,8]);</code></pre>
         </div>
 
         <h3>Arguments</h3>
 
         <table>
             
-<dt>mass.range</dt>
-<dd><p><p>-</p></p></dd>
-
-
-<dt>feature.size</dt>
-<dd><p><p>-</p></p></dd>
-
-
-<dt>env</dt>
-<dd><p><p>-</p></p></dd>
-
         </table>
 
 

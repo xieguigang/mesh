@@ -49,6 +49,19 @@ declare namespace mesh {
    */
    function expr1(mesh: object, mzpack?: boolean, q?: number, spatial?: boolean): object|object;
    /**
+     * @param C default value Is ``[1,9]``.
+     * @param H default value Is ``[0,60]``.
+     * @param O default value Is ``[0,18]``.
+     * @param N default value Is ``[0,10]``.
+     * @param P default value Is ``[0,8]``.
+     * @param S default value Is ``[0,8]``.
+     * @param F default value Is ``[0,15]``.
+     * @param Cl default value Is ``[0,8]``.
+     * @param Br default value Is ``[0,5]``.
+     * @param Si default value Is ``[0,8]``.
+   */
+   function formula(mesh: object, C?: any, H?: any, O?: any, N?: any, P?: any, S?: any, F?: any, Cl?: any, Br?: any, Si?: any): object;
+   /**
     * Create a mesh argument for run metabolomics expression matrix simulation
     * 
     * 
@@ -60,13 +73,15 @@ declare namespace mesh {
      * + default value Is ``10000``.
      * @param mzdiff 
      * + default value Is ``0.005``.
+     * @param adducts 
+     * + default value Is ``["[M+H]+","[M+Na]+","[M+K]+","[M+NH4]+","[M+H2O+H]+","[M-H2O+H]+"]``.
      * @param intensity_max 
      * + default value Is ``100000000``.
      * @param env -
      * 
      * + default value Is ``null``.
    */
-   function mesh(mass_range?: any, feature_size?: object, mzdiff?: number, intensity_max?: number, env?: object): object;
+   function mesh(mass_range?: any, feature_size?: object, mzdiff?: number, adducts?: any, intensity_max?: number, env?: object): object;
    /**
     * Set metabolite features
     * 
@@ -83,11 +98,13 @@ declare namespace mesh {
      *  this parameter value could be the annotation abstract model: @``T:BioNovoGene.BioDeep.Chemoinformatics.MetaboliteAnnotation``,
      *  or the kegg compound model @``T:SMRUCC.genomics.Assembly.KEGG.DBGET.bGetObject.Compound`` from the GCModeller package.
      * @param adducts -
+     * 
+     * + default value Is ``["[M+H]+","[M+Na]+","[M+K]+","[M+NH4]+","[M+H2O+H]+","[M-H2O+H]+"]``.
      * @param env -
      * 
      * + default value Is ``null``.
    */
-   function metabolites(mesh: object, metabolites: any, adducts: any, env?: object): object;
+   function metabolites(mesh: object, metabolites: any, adducts?: any, env?: object): object;
    module samples {
       /**
        * Create a spatial sample via the given raster matrix
