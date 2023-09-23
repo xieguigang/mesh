@@ -76,7 +76,7 @@ declare namespace mesh {
      * @param adducts 
      * + default value Is ``["[M+H]+","[M+Na]+","[M+K]+","[M+NH4]+","[M+H2O+H]+","[M-H2O+H]+"]``.
      * @param intensity_max 
-     * + default value Is ``100000000``.
+     * + default value Is ``100000``.
      * @param env -
      * 
      * + default value Is ``null``.
