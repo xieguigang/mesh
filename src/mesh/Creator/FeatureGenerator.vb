@@ -23,7 +23,7 @@ Public Class FeatureGenerator : Implements Enumeration(Of Double)
     Sub New(args As MeshArguments)
         Me.ions = New List(Of Double)
         Me.mass_range = New DoubleRange(args.mass_range)
-        Me.opts = opts
+        Me.opts = args.opts
         Me.args = args
     End Sub
 
