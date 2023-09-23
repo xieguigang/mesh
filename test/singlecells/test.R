@@ -45,7 +45,7 @@ let compounds = lapply(files, function(path) {
 
 names(compounds) = basename(files);
 
-str(compounds);
+# str(compounds);
 
 # stop();
 
@@ -53,7 +53,11 @@ let mesh = mesh(
     mass.range = [50, 2000], 
     feature.size = 200, 
     mzdiff = 0.005);
-let raster = as.raster(readImage(`../../docs\Visualize-Metabolic-Process-at-the-Single-Cell-Level.png`)); 
+    
+let raster = as.raster(
+    img = readImage(`../../docs\Visualize-Metabolic-Process-at-the-Single-Cell-Level.png`),
+    rgb.stack = color.height_map(["#000000","#1c2ccc","#b0329c","#e6ed76","#ffffff"])
+); 
 
 # let labels = raster_vec(raster);
 # let gmm = clustering::gmm(labels, components = 6);
