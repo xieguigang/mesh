@@ -53,10 +53,10 @@ let mesh = mesh(
     mass.range = [50, 2000], 
     feature.size = 200, 
     mzdiff = 0.005);
-    
+
 let raster = as.raster(
     img = readImage(`../../docs\Visualize-Metabolic-Process-at-the-Single-Cell-Level.png`),
-    rgb.stack = color.height_map(["#000000","#1c2ccc","#b0329c","#e6ed76","#ffffff"])
+    rgb.stack = color.height_map(["#000000","#1c2ccc","#b0329c","#e6ed76"])
 ); 
 
 # let labels = raster_vec(raster);
