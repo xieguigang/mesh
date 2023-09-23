@@ -43,7 +43,7 @@ Public Class Generator
     End Function
 
     Private Iterator Function GetIonExpressions() As IEnumerable(Of DataFrameRow)
-        Dim ions As Double() = Me.ions.Clear().CreateIonFeatures().ToArray
+        Dim ions As Double() = Me.ions.Clear().CreateIonFeatures().Shuffles.ToArray
         Dim sample_info As New List(Of (name As String, SampleInfo()))
         Dim sample_data As New List(Of Double())
         Dim zero As Vector = Vector.Zero
