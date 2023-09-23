@@ -42,7 +42,7 @@ Public Module Rscript
                              Optional mzdiff As Double = 0.005,
                              <RRawVectorArgument(GetType(String))>
                              Optional adducts As Object = "[M+H]+|[M+Na]+|[M+K]+|[M+NH4]+|[M+H2O+H]+|[M-H2O+H]+",
-                             Optional intensity_max As Double = 100000000.0,
+                             Optional intensity_max As Double = 100000.0,
                              Optional env As Environment = Nothing) As MeshArguments
 
         Dim range As Double() = CLRVector.asNumeric(mass_range)
@@ -182,7 +182,7 @@ Public Module Rscript
                                   Optional linear_kernel As Boolean = False,
                                   Optional env As Environment = Nothing) As Object
 
-        Dim pixels As PixelData() = raster.GetRasterData.ToArray
+        Dim pixels As PixelData() = raster.GetRasterData.Where(Function(a) a.Scale > 0).ToArray
         Dim x As Integer() = pixels.Select(Function(p) p.X).ToArray
         Dim y As Integer() = pixels.Select(Function(p) p.Y).ToArray
         Dim kernels As Vector = pixels.Select(Function(p) p.Scale).AsVector
