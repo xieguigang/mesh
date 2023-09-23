@@ -53,11 +53,17 @@ let mesh = mesh(
     mass.range = [50, 2000], 
     feature.size = 200, 
     mzdiff = 0.005);
-
+let ruler = color.height_map(["#000000","#004b71","#2336cf","#0accfd","#9133ef","#b85997","#e79953","#e6ed76","#ffffff"]);
 let raster = as.raster(
     img = readImage(`../../docs\Visualize-Metabolic-Process-at-the-Single-Cell-Level.png`),
-    rgb.stack = color.height_map(["#000000","#1c2ccc","#b0329c","#e6ed76"])
+    rgb.stack = ruler
 ); 
+
+`<span style="background-color:${as.vector(ruler)}">&nbsp;</span>`
+|> writeLines(con = `${@dir}/ruler.html`)
+;
+
+# stop();
 
 # let labels = raster_vec(raster);
 # let gmm = clustering::gmm(labels, components = 6);

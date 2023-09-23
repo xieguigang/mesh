@@ -3,6 +3,7 @@ Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Math.Distributions
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
+Imports randf = Microsoft.VisualBasic.Math.RandomExtensions
 
 Public Class SpatialGenerator : Inherits Generator
 
@@ -62,13 +63,10 @@ Public Class SpatialGenerator : Inherits Generator
             Dim scale As Double = Val(spot.color)
             Dim offset As Integer = scale_range.ScaleMapping(scale, index_select)
             Dim mu As Double = x(offset)
-            Dim sigma As Double = kernel(CInt(i)) ' randf.NextGaussian(mu:=std.Exp(Val(spot.color) / max))
+            Dim sigma As Double = kernel(CInt(i)) * (3 * randf.NextDouble)
             Dim sample_data As Vector = pnorm.ProbabilityDensity(x, mu, sigma)
-            ' Dim various As Vector = MathGamma.gamma(Vector.rand(min:=-1.5, max:=1.5, args.featureSize) * v_factor) / 2.31
 
-            ' sample_data = sample_data * (1 / sample_data.Abs.Min)
-            ' sample_data = sample_data + various
-            ' sample_data(sample_data < 0) = zero
+            sample_data += sample_data * Vector.rand(-0.5, 0.5, sample_data.Dim)
 
             If ++i Mod d = 0 Then
                 Call VBDebugger.EchoLine($"  * [{((i / sample_group.Length) * 100).ToString("F2")}%, {(Now - t0).FormatTime}] {spot.sample_name}...")
