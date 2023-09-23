@@ -182,7 +182,9 @@ Public Module Rscript
                                   Optional linear_kernel As Boolean = False,
                                   Optional env As Environment = Nothing) As Object
 
-        Dim pixels As PixelData() = raster.GetRasterData.Where(Function(a) a.Scale > 0).ToArray
+        Dim pixels As PixelData() = raster.GetRasterData _
+            .Where(Function(a) a.Scale > 0) _
+            .ToArray
         Dim x As Integer() = pixels.Select(Function(p) p.X).ToArray
         Dim y As Integer() = pixels.Select(Function(p) p.Y).ToArray
         Dim kernels As Vector = pixels.Select(Function(p) p.Scale).AsVector
