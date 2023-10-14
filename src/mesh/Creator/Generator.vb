@@ -1,4 +1,5 @@
-﻿Imports Microsoft.VisualBasic.Language
+﻿Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.Distributions
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
@@ -31,6 +32,8 @@ Public Class Generator
     ''' creates the expression value based on the arguments
     ''' </summary>
     ''' <returns></returns>
+    ''' 
+    <MethodImpl(MethodImplOptions.AggressiveInlining)>
     Public Function GetExpressionMatrix() As Matrix
         Return New Matrix With {
             .sampleID = sample_groups _
