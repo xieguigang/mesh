@@ -8,6 +8,10 @@ Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
 
 Module MsData
 
+    Public Function PopulateMs1Scan(sampleId As String, t As Double, q As Double, mz As Vector, sampleinfo As SampleInfo(), sample As DataFrameRow()) As ScanMS1
+
+    End Function
+
     <Extension>
     Public Function PopulateMs1Scan(sample As DataFrameRow,
                                     t As Double,

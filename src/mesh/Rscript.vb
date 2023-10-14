@@ -216,6 +216,9 @@ Public Module Rscript
                 SpatialInfo.Spatial2D(x, y, labels(Scan0), Nothing, template)
             ) _
             .ToArray
+            mesh.kernel = mesh.kernel _
+                .JoinIterates(kernels) _
+                .ToArray
         Else
             ' is sample
             mesh.setSpatialSamples(
@@ -352,28 +355,54 @@ Public Module Rscript
         Dim scan1 As New List(Of ScanMS1)
         Dim dt As Double = CLRVector.asNumeric(rt_range).Range.Length / scans.expression.Length
         Dim t As Double = 0
-        Dim sampleinfo As New Dictionary(Of String, SampleInfo)
         Dim current As ScanMS1
         Dim d As Integer = scans.expression.Length / 25
         Dim p As i32 = 0
 
         If Not mesh Is Nothing Then
-            sampleinfo = mesh.sampleinfo.ToDictionary(Function(s) s.ID)
-        End If
+            Dim sampleinfo As Dictionary(Of String, (SampleInfo(), DataFrameRow())) = mesh.sampleinfo _
+                .Zip(scans.expression()) _
+                .GroupBy(Function(si) si.First.ID) _
+                .ToDictionary(Function(si) si.Key,
+                              Function(s)
+                                  Dim pie = s.Select(Function(si) si.First).ToArray
+                                  Dim conv = s.Select(Function(si) si.Second).ToArray
 
-        For Each sample As DataFrameRow In scans.expression
-            t += dt
-            current = sample.PopulateMs1Scan(t, q, spatial, mz, sampleinfo)
+                                  Return (pie, conv)
+                              End Function)
 
-            If Not current Is Nothing Then
-                Call scan1.Add(current)
-            End If
-            If (++p Mod d) = 0 Then
-                If scan1.Count > 0 Then
-                    Call VBDebugger.EchoLine($"[{p}/{scans.expression.Length}] {(p / scans.expression.Length * 100).ToString("F2")}% ... {scan1.Last.scan_id}")
+            ' processing mutliple layer sample data
+            For Each sample In sampleinfo
+                t += dt
+                current = MsData.PopulateMs1Scan(sample.Key, t, q, mz, sample.Value.Item1, sample.Value.Item2)
+
+                If Not current Is Nothing Then
+                    Call scan1.Add(current)
                 End If
-            End If
-        Next
+                If (++p Mod d) = 0 Then
+                    If scan1.Count > 0 Then
+                        Call VBDebugger.EchoLine($"[{p}/{scans.expression.Length}] {(p / scans.expression.Length * 100).ToString("F2")}% ... {scan1.Last.scan_id}")
+                    End If
+                End If
+            Next
+        Else
+            Dim empty As New Dictionary(Of String, SampleInfo)
+
+            ' processing simple sample data
+            For Each sample As DataFrameRow In scans.expression
+                t += dt
+                current = sample.PopulateMs1Scan(t, q, spatial, mz, sampleinfo:=empty)
+
+                If Not current Is Nothing Then
+                    Call scan1.Add(current)
+                End If
+                If (++p Mod d) = 0 Then
+                    If scan1.Count > 0 Then
+                        Call VBDebugger.EchoLine($"[{p}/{scans.expression.Length}] {(p / scans.expression.Length * 100).ToString("F2")}% ... {scan1.Last.scan_id}")
+                    End If
+                End If
+            Next
+        End If
 
         Return New mzPack With {
             .Application = If(
