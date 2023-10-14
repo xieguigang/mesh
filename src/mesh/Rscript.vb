@@ -211,12 +211,11 @@ Public Module Rscript
 
         If kernels.Dim > 1 AndAlso labels.TryCount = 1 Then
             ' is a segment
-            If mesh.morphology Is Nothing Then
-                mesh.morphology = New Dictionary(Of String, SampleInfo())
-            End If
-
             mesh.processTemplateString(template)
-            mesh.morphology(labels(Scan0)) = SpatialInfo.Spatial2D(x, y, kernels, Nothing, template).ToArray
+            mesh.sampleinfo = mesh.sampleinfo.JoinIterates(
+                SpatialInfo.Spatial2D(x, y, labels(Scan0), Nothing, template)
+            ) _
+            .ToArray
         Else
             ' is sample
             mesh.setSpatialSamples(

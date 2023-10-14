@@ -3,7 +3,6 @@ Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Math.Distributions
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
-Imports randf = Microsoft.VisualBasic.Math.RandomExtensions
 
 Public Class SpatialGenerator : Inherits Generator
 

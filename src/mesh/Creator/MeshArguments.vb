@@ -35,8 +35,6 @@ Public Class MeshArguments
     ''' <returns></returns>
     Public Property sampleinfo As SampleInfo()
 
-    Public Property morphology As Dictionary(Of String, SampleInfo())
-
     ''' <summary>
     ''' the expression level kernel, the value is corresponding with the <see cref="sampleinfo"/>
     ''' </summary>
