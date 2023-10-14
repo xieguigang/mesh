@@ -1,4 +1,5 @@
-﻿Imports System.Runtime.CompilerServices
+﻿Imports System.Drawing
+Imports System.Runtime.CompilerServices
 Imports BioNovoGene.Analytical.MassSpectrometry.Assembly.mzData.mzWebCache
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
@@ -10,7 +11,26 @@ Module MsData
 
     Public Function PopulateMs1Scan(sampleId As String, t As Double, q As Double, mz As Vector, sampleinfo As SampleInfo(), sample As DataFrameRow()) As ScanMS1
         Dim expression As Vector = sample.Sum
+        Dim sample_info As New SampleInfo With {
+            .batch = 0,
+            .color = "black",
+            .ID = sampleId,
+            .sample_info = sampleinfo _
+                .Select(Function(s) s.sample_info) _
+                .Distinct _
+                .JoinBy("+"),
+            .injectionOrder = 0,
+            .sample_name = sampleinfo(0).sample_name,
+            .shape = Nothing
+        }
 
+        Return AssembleMSScanData(
+            scan_id:=sampleId,
+            geneId:=sampleId,
+            t:=t, q:=q, spatial:=True,
+            mz:=mz, expression:=expression,
+            sample_data:=sample_info
+        )
     End Function
 
     Private Function AssembleMSScanData(scan_id As String, geneId As String, t As Double, q As Double, spatial As Boolean,
