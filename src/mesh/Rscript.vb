@@ -93,6 +93,9 @@ Public Module Rscript
     ''' <param name="sampleinfo"></param>
     ''' <param name="env"></param>
     ''' <returns></returns>
+    ''' <remarks>
+    ''' set sampleinfo value to the mesh sampleinfo property
+    ''' </remarks>
     <ExportAPI("samples")>
     <RApiReturn(GetType(MeshArguments))>
     <Extension>
@@ -118,6 +121,9 @@ Public Module Rscript
     ''' </param>
     ''' <param name="env"></param>
     ''' <returns></returns>
+    ''' <remarks>
+    ''' the sampleinfo color was used as the total ion in each spatial spot
+    ''' </remarks>
     <ExportAPI("samples.spatial")>
     <Extension>
     Public Function setSpatialSamples(mesh As MeshArguments,
@@ -147,8 +153,7 @@ Public Module Rscript
             mesh.kernel = CLRVector.asNumeric(kernel)
         End If
 
-        template = template.Replace("%min", mesh.mass_range.Min.ToString("F4"))
-        template = template.Replace("%max", mesh.mass_range.Max.ToString("F4"))
+        Call processTemplateString(mesh, template)
 
         If zi.IsNullOrEmpty Then
             ' spatial 2d
@@ -168,6 +173,13 @@ Public Module Rscript
         Return mesh.setSamples(sampleinfo, env)
     End Function
 
+    <Extension>
+    Private Function processTemplateString(mesh As MeshArguments, ByRef template As String) As String
+        template = template.Replace("%min", mesh.mass_range.Min.ToString("F4"))
+        template = template.Replace("%max", mesh.mass_range.Max.ToString("F4"))
+        Return template
+    End Function
+
     ''' <summary>
     ''' Create a spatial sample via the given raster matrix
     ''' </summary>
@@ -181,6 +193,7 @@ Public Module Rscript
                                   Optional label As Object = Nothing,
                                   Optional kernel_cutoff As Double = 0.0001,
                                   Optional linear_kernel As Boolean = False,
+                                  Optional template As String = "[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]",
                                   Optional env As Environment = Nothing) As Object
 
         Dim pixels As PixelData() = raster.GetRasterData _
@@ -196,15 +209,27 @@ Public Module Rscript
         kernels = kernels / kernels.Max
         kernels(kernels < kernel_cutoff) = Vector.Zero
 
-        mesh.setSpatialSamples(
-            x, y,
-            kernel:=kernels,
-            group:=labels,
-            env:=env,
-            linear_kernel:=linear_kernel
-        )
-        mesh.kernel = kernels
-        mesh.linear_kernel = linear_kernel
+        If kernels.Dim > 1 AndAlso labels.TryCount = 1 Then
+            ' is a segment
+            If mesh.morphology Is Nothing Then
+                mesh.morphology = New Dictionary(Of String, SampleInfo())
+            End If
+
+            mesh.processTemplateString(template)
+            mesh.morphology(labels(Scan0)) = SpatialInfo.Spatial2D(x, y, kernels, Nothing, template).ToArray
+        Else
+            ' is sample
+            mesh.setSpatialSamples(
+                x, y,
+                kernel:=kernels,
+                group:=labels,
+                env:=env,
+                linear_kernel:=linear_kernel,
+                template:=template
+            )
+            mesh.kernel = kernels
+            mesh.linear_kernel = linear_kernel
+        End If
 
         Return mesh
     End Function

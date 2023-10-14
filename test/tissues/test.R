@@ -86,6 +86,16 @@ mesh
 ;
 # samples.raster(mesh, raster, label = labels);
 
+for(file in list.files("\demo\spatial\segments", pattern = "*.png")) {
+    raster = as.raster(
+        img = readImage(file)
+        # rgb.stack = ruler
+    ); 
+
+    mesh <- samples.raster(mesh, raster, label = basename(file));
+}
+
+
 let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE, q= 0.5);
 
 write.mzPack(pack, file = `demo.mzPack`, version = 2);
