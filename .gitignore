@@ -264,3 +264,4 @@ test/singlecells/singlecell.mzPack
 test/singlecells/ions.csv
 test/singlecells/HEstain-singlecells.mzPack
 test/tissues/demo.mzPack
+test/tissues/tissue.cdf
