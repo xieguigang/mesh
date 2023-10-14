@@ -2,6 +2,7 @@
 Imports BioNovoGene.Analytical.MassSpectrometry.Math.Ms1.PrecursorType
 Imports BioNovoGene.BioDeep.Chemoinformatics
 Imports BioNovoGene.BioDeep.Chemoinformatics.Formula
+Imports Microsoft.VisualBasic.Linq
 Imports SMRUCC.genomics.Analysis.HTS.DataFrame
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
 
@@ -63,6 +64,16 @@ Public Class MeshArguments
     ''' </remarks>
     Public Property adducts As MzCalculator()
     Public Property opts As SearchOption
+
+    Public ReadOnly Property sample_groups As String()
+        Get
+            Return sampleinfo _
+                .SafeQuery _
+                .Select(Function(si) si.sample_info) _
+                .Distinct _
+                .ToArray
+        End Get
+    End Property
 
     <MethodImpl(MethodImplOptions.AggressiveInlining)>
     Public Function CreateMatrix() As Matrix

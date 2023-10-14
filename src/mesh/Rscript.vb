@@ -359,7 +359,7 @@ Public Module Rscript
         Dim d As Integer = scans.expression.Length / 25
         Dim p As i32 = 0
 
-        If Not mesh Is Nothing Then
+        If Not mesh Is Nothing AndAlso mesh.sample_groups.Length > 1 Then
             Dim sampleinfo As Dictionary(Of String, (SampleInfo(), DataFrameRow())) = mesh.sampleinfo _
                 .Zip(scans.expression()) _
                 .GroupBy(Function(si) si.First.ID) _
@@ -387,6 +387,10 @@ Public Module Rscript
             Next
         Else
             Dim empty As New Dictionary(Of String, SampleInfo)
+
+            If Not mesh Is Nothing Then
+                empty = mesh.sampleinfo.ToDictionary(Function(i) i.ID)
+            End If
 
             ' processing simple sample data
             For Each sample As DataFrameRow In scans.expression
