@@ -371,6 +371,8 @@ Public Module Rscript
                                   Return (pie, conv)
                               End Function)
 
+            mz = mz.Shuffles.AsVector
+
             ' processing mutliple layer sample data
             For Each sample In sampleinfo
                 t += dt
