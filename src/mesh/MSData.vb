@@ -1,5 +1,4 @@
-﻿Imports System.Drawing
-Imports System.Runtime.CompilerServices
+﻿Imports System.Runtime.CompilerServices
 Imports BioNovoGene.Analytical.MassSpectrometry.Assembly.mzData.mzWebCache
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
@@ -9,8 +8,11 @@ Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
 
 Module MsData
 
-    Public Function PopulateMs1Scan(sampleId As String, t As Double, q As Double, mz As Vector, sampleinfo As SampleInfo(), sample As DataFrameRow()) As ScanMS1
-        Dim expression As Vector = sample.Sum
+    Public Function PopulateMs1Scan(sampleId As String, t As Double, q As Double,
+                                    mz As Vector, sampleinfo As SampleInfo(),
+                                    sample As DataFrameRow()) As ScanMS1
+
+        Dim expression As Vector = Nothing
         Dim sample_info As New SampleInfo With {
             .batch = 0,
             .color = "black",
@@ -23,26 +25,32 @@ Module MsData
             .sample_name = sampleinfo(0).sample_name,
             .shape = Nothing
         }
+        Dim cut As Double = 0
+
+        For Each si As DataFrameRow In sample.SafeQuery
+            Dim v As Vector = si.CreateVector
+
+            If q > 0 Then
+                cut = expression.GKQuantile.Query(q)
+                v(v < cut) = Vector.Zero
+            End If
+
+            expression += v
+        Next
 
         Return AssembleMSScanData(
             scan_id:=sampleId,
             geneId:=sampleId,
-            t:=t, q:=q, spatial:=True,
+            t:=t, cut:=-1, spatial:=True,  ' expression vector has already been cut, so set cut to -1
             mz:=mz, expression:=expression,
             sample_data:=sample_info
         )
     End Function
 
-    Private Function AssembleMSScanData(scan_id As String, geneId As String, t As Double, q As Double, spatial As Boolean,
+    Private Function AssembleMSScanData(scan_id As String, geneId As String, t As Double, cut As Double, spatial As Boolean,
                                         mz As Vector,
                                         expression As Vector,
                                         sample_data As SampleInfo) As ScanMS1
-        Dim cut As Double = 0
-
-        If q > 0 Then
-            cut = expression.GKQuantile.Query(q)
-        End If
-
         Dim i = expression > cut
         Dim mzi = mz(i)
         Dim into = expression(i)
@@ -108,6 +116,12 @@ Module MsData
             scan_id = sample.geneID
         End If
 
-        Return AssembleMSScanData(scan_id, sample.geneID, t, q, spatial, mz, expression, sample_data)
+        Dim cut As Double = 0
+
+        If q > 0 Then
+            cut = expression.GKQuantile.Query(q)
+        End If
+
+        Return AssembleMSScanData(scan_id, sample.geneID, t, cut, spatial, mz, expression, sample_data)
     End Function
 End Module
