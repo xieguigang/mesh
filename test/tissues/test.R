@@ -51,7 +51,7 @@ names(compounds) = basename(files);
 
 let mesh = mesh(
     mass.range = [50, 2000], 
-    feature.size = 200, 
+    feature.size = 500, 
     mzdiff = 0.005);
 let ruler = color.height_map(["#000000","#004b71","#2336cf","#0accfd","#9133ef","#b85997","#e79953","#e6ed76","#ffffff"]);
 let raster = as.raster(
