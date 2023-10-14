@@ -55,13 +55,13 @@ let mesh = mesh(
     mzdiff = 0.005);
 let ruler = color.height_map(["#000000","#004b71","#2336cf","#0accfd","#9133ef","#b85997","#e79953","#e6ed76","#ffffff"]);
 let raster = as.raster(
-    img = readImage(`../../docs\Visualize-Metabolic-Process-at-the-Single-Cell-Level.png`),
-    rgb.stack = ruler
+    img = readImage("\demo\spatial\all.png")
+    # rgb.stack = ruler
 ); 
 
-`<span style="background-color:${as.vector(ruler)}">&nbsp;</span>`
-|> writeLines(con = `${@dir}/ruler.html`)
-;
+# `<span style="background-color:${as.vector(ruler)}">&nbsp;</span>`
+# |> writeLines(con = `${@dir}/ruler.html`)
+# ;
 
 # stop();
 
@@ -82,10 +82,10 @@ dev.off();
 
 mesh 
 |> samples.raster(raster)
-|> metabolites(metabolites = unlist(compounds),  adducts = ["[M+H]+","[M+Na]+"])
+|> metabolites(metabolites = unlist(compounds),  adducts = ["[M+H]+","[M+Na]+","[M+K]+","[M+NH4]+","[M+H-H2O]+"])
 ;
 # samples.raster(mesh, raster, label = labels);
 
 let pack = mesh::expr1(mesh, mzpack = TRUE, spatial = TRUE, q= 0.5);
 
-write.mzPack(pack, file = `demo_singlecells.mzPack`, version = 2);
+write.mzPack(pack, file = `demo.mzPack`, version = 2);
