@@ -157,14 +157,14 @@ Public Module Rscript
 
         If zi.IsNullOrEmpty Then
             ' spatial 2d
-            sampleinfo = SpatialInfo.Spatial2D(xi, yi, mesh.kernel, labels, template).ToArray
+            sampleinfo = SpatialInfo.Spatial2D(xi, yi, Nothing, labels, template).ToArray
         Else
             If xi.Length <> zi.Length Then
                 Return Internal.debug.stop("invalid spatial x,y,z", env)
             End If
 
             ' spatial 3d
-            sampleinfo = SpatialInfo.Spatial3D(xi, yi, zi, mesh.kernel, labels, template).ToArray
+            sampleinfo = SpatialInfo.Spatial3D(xi, yi, zi, Nothing, labels, template).ToArray
         End If
 
         mesh.spatial = True
