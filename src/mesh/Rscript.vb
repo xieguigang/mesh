@@ -100,9 +100,10 @@ Public Module Rscript
                                <RRawVectorArgument>
                                sampleinfo As Object,
                                Optional env As Environment = Nothing) As Object
-
+#Disable Warning
         Dim samples As SampleInfo() = REnv.asVector(Of SampleInfo)(sampleinfo)
         mesh.sampleinfo = samples
+#Enable Warning
         Return mesh
     End Function
 
