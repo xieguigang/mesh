@@ -41,7 +41,7 @@ Module MsData
         Return AssembleMSScanData(
             scan_id:=sampleId,
             geneId:=sampleId,
-            t:=t, cut:=-1, spatial:=True,  ' expression vector has already been cut, so set cut to -1
+            t:=t, cut:=1, spatial:=True,  ' expression vector has already been cut, so set cut to 1
             mz:=mz, expression:=expression,
             sample_data:=sample_info
         )
