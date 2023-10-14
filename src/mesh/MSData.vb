@@ -31,7 +31,7 @@ Module MsData
             Dim v As Vector = si.CreateVector
 
             If q > 0 Then
-                cut = expression.GKQuantile.Query(q)
+                cut = v.GKQuantile.Query(q)
                 v(v < cut) = Vector.Zero
             End If
 
