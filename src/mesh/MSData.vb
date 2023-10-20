@@ -47,6 +47,18 @@ Module MsData
         )
     End Function
 
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="scan_id">used as the display title</param>
+    ''' <param name="geneId">the spatial spot [x,y,z]</param>
+    ''' <param name="t"></param>
+    ''' <param name="cut"></param>
+    ''' <param name="spatial"></param>
+    ''' <param name="mz"></param>
+    ''' <param name="expression"></param>
+    ''' <param name="sample_data"></param>
+    ''' <returns></returns>
     Private Function AssembleMSScanData(scan_id As String, geneId As String, t As Double, cut As Double, spatial As Boolean,
                                         mz As Vector,
                                         expression As Vector,

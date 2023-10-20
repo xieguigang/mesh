@@ -78,7 +78,8 @@ Public Class Generator
 
                 Call sample_info.AddRange(cal_group.Select(Function(sample) sample.ID))
 
-                Dim maxinto As Double = Val(cal_group.First.color) * args.intensity_max
+                Dim level As Double = Val(cal_group.First.color)
+                Dim maxinto As Double = level * args.intensity_max
 
                 For Each v As Vector In CalsMatrix(cal_group.ToArray, maxinto)
                     v(v.IsNaN) = zero
