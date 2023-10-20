@@ -384,7 +384,8 @@ Public Module Rscript
         Dim p As i32 = 0
 
         If Not mesh Is Nothing AndAlso (mesh.sample_groups.Length > 1 OrElse Not mesh.cals.IsNullOrEmpty) Then
-            Dim sampleinfo As Dictionary(Of String, (SampleInfo(), DataFrameRow())) = mesh.sampleinfo _
+            Dim infoSource = mesh.sampleinfo.JoinIterates(mesh.cals).ToArray
+            Dim sampleinfo As Dictionary(Of String, (SampleInfo(), DataFrameRow())) = infoSource _
                 .Zip(scans.expression()) _
                 .GroupBy(Function(si) si.First.ID) _
                 .ToDictionary(Function(si) si.Key,
@@ -398,7 +399,7 @@ Public Module Rscript
             mz = mz.Shuffles.AsVector
 
             ' processing mutliple layer sample data
-            For Each sample In sampleinfo.OrderByDescending(Function(si) si.Value.Item2.Length)
+            For Each sample In sampleinfo ' .OrderByDescending(Function(si) si.Value.Item2.Length)
                 t += dt
                 current = MsData.PopulateMs1Scan(sample.Key, t, q, mz, sample.Value.Item1, sample.Value.Item2)
 
