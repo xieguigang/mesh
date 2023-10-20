@@ -4,15 +4,18 @@ Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
 
 Module SpatialInfo
 
+    Const templ_spatial2D As String = "[raster-%y.raw] [MS1][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]"
+    Const templ_spatial3D As String = "[raster-%y.raw] [MS1][Scan_%d][%x,%y,%z] FTMS + p NSI Full ms [%min-%max]"
+
     <Extension>
     Public Iterator Function Spatial2D(x As Integer(), y As Integer(),
-                                       kernels As Double(),
+                                       tag As String,
                                        Optional labels As String() = Nothing,
-                                       Optional template As String = "[raster-%y.raw] [MS1][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]") As IEnumerable(Of SampleInfo)
+                                       Optional template As String = templ_spatial2D) As IEnumerable(Of SampleInfo)
         Dim scan_id As String
 
         If labels.IsNullOrEmpty Then
-            labels = "spatial_2D".Replicate(x.Length).ToArray
+            labels = If(tag, "spatial_2D").Replicate(x.Length).ToArray
         End If
 
         For i As Integer = 0 To x.Length - 1
@@ -48,13 +51,13 @@ Module SpatialInfo
 
     <Extension>
     Public Iterator Function Spatial3D(x As Integer(), y As Integer(), z As Integer(),
-                                       kernels As Double(),
+                                       tag As String,
                                        Optional labels As String() = Nothing,
-                                       Optional template As String = "[raster-%y.raw] [MS1][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]") As IEnumerable(Of SampleInfo)
+                                       Optional template As String = templ_spatial3D) As IEnumerable(Of SampleInfo)
         Dim scan_id As String
 
         If labels.IsNullOrEmpty Then
-            labels = "spatial_3D".Replicate(x.Length).ToArray
+            labels = If(tag, "spatial_3D").Replicate(x.Length).ToArray
         End If
 
         For i As Integer = 0 To x.Length - 1

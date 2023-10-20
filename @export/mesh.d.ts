@@ -118,14 +118,17 @@ declare namespace mesh {
         * + default value Is ``0.0001``.
         * @param linear_kernel 
         * + default value Is ``false``.
+        * @param template 
+        * + default value Is ``'[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]'``.
         * @param env -
         * 
         * + default value Is ``null``.
       */
-      function raster(mesh: object, raster: object, label?: any, kernel_cutoff?: number, linear_kernel?: boolean, env?: object): any;
+      function raster(mesh: object, raster: object, label?: any, kernel_cutoff?: number, linear_kernel?: boolean, template?: string, env?: object): any;
       /**
        * Set spatial id
        * 
+       * > the sampleinfo color was used as the total ion in each spatial spot
        * 
         * @param mesh -
         * @param x -

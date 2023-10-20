@@ -93,6 +93,9 @@ Public Module Rscript
     ''' <param name="sampleinfo"></param>
     ''' <param name="env"></param>
     ''' <returns></returns>
+    ''' <remarks>
+    ''' set sampleinfo value to the mesh sampleinfo property
+    ''' </remarks>
     <ExportAPI("samples")>
     <RApiReturn(GetType(MeshArguments))>
     <Extension>
@@ -100,9 +103,10 @@ Public Module Rscript
                                <RRawVectorArgument>
                                sampleinfo As Object,
                                Optional env As Environment = Nothing) As Object
-
+#Disable Warning
         Dim samples As SampleInfo() = REnv.asVector(Of SampleInfo)(sampleinfo)
         mesh.sampleinfo = samples
+#Enable Warning
         Return mesh
     End Function
 
@@ -117,6 +121,9 @@ Public Module Rscript
     ''' </param>
     ''' <param name="env"></param>
     ''' <returns></returns>
+    ''' <remarks>
+    ''' the sampleinfo color was used as the total ion in each spatial spot
+    ''' </remarks>
     <ExportAPI("samples.spatial")>
     <Extension>
     Public Function setSpatialSamples(mesh As MeshArguments,
@@ -146,25 +153,31 @@ Public Module Rscript
             mesh.kernel = CLRVector.asNumeric(kernel)
         End If
 
-        template = template.Replace("%min", mesh.mass_range.Min.ToString("F4"))
-        template = template.Replace("%max", mesh.mass_range.Max.ToString("F4"))
+        Call processTemplateString(mesh, template)
 
         If zi.IsNullOrEmpty Then
             ' spatial 2d
-            sampleinfo = SpatialInfo.Spatial2D(xi, yi, mesh.kernel, labels, template).ToArray
+            sampleinfo = SpatialInfo.Spatial2D(xi, yi, Nothing, labels, template).ToArray
         Else
             If xi.Length <> zi.Length Then
                 Return Internal.debug.stop("invalid spatial x,y,z", env)
             End If
 
             ' spatial 3d
-            sampleinfo = SpatialInfo.Spatial3D(xi, yi, zi, mesh.kernel, labels, template).ToArray
+            sampleinfo = SpatialInfo.Spatial3D(xi, yi, zi, Nothing, labels, template).ToArray
         End If
 
         mesh.spatial = True
         mesh.linear_kernel = linear_kernel
 
         Return mesh.setSamples(sampleinfo, env)
+    End Function
+
+    <Extension>
+    Private Function processTemplateString(mesh As MeshArguments, ByRef template As String) As String
+        template = template.Replace("%min", mesh.mass_range.Min.ToString("F4"))
+        template = template.Replace("%max", mesh.mass_range.Max.ToString("F4"))
+        Return template
     End Function
 
     ''' <summary>
@@ -180,6 +193,7 @@ Public Module Rscript
                                   Optional label As Object = Nothing,
                                   Optional kernel_cutoff As Double = 0.0001,
                                   Optional linear_kernel As Boolean = False,
+                                  Optional template As String = "[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]",
                                   Optional env As Environment = Nothing) As Object
 
         Dim pixels As PixelData() = raster.GetRasterData _
@@ -195,15 +209,29 @@ Public Module Rscript
         kernels = kernels / kernels.Max
         kernels(kernels < kernel_cutoff) = Vector.Zero
 
-        mesh.setSpatialSamples(
-            x, y,
-            kernel:=kernels,
-            group:=labels,
-            env:=env,
-            linear_kernel:=linear_kernel
-        )
-        mesh.kernel = kernels
-        mesh.linear_kernel = linear_kernel
+        If kernels.Dim > 1 AndAlso labels.TryCount = 1 Then
+            ' is a segment
+            mesh.processTemplateString(template)
+            mesh.sampleinfo = mesh.sampleinfo.JoinIterates(
+                SpatialInfo.Spatial2D(x, y, labels(Scan0), Nothing, template)
+            ) _
+            .ToArray
+            mesh.kernel = mesh.kernel _
+                .JoinIterates(kernels) _
+                .ToArray
+        Else
+            ' is sample
+            mesh.setSpatialSamples(
+                x, y,
+                kernel:=kernels,
+                group:=labels,
+                env:=env,
+                linear_kernel:=linear_kernel,
+                template:=template
+            )
+            mesh.kernel = kernels
+            mesh.linear_kernel = linear_kernel
+        End If
 
         Return mesh
     End Function
@@ -327,28 +355,60 @@ Public Module Rscript
         Dim scan1 As New List(Of ScanMS1)
         Dim dt As Double = CLRVector.asNumeric(rt_range).Range.Length / scans.expression.Length
         Dim t As Double = 0
-        Dim sampleinfo As New Dictionary(Of String, SampleInfo)
         Dim current As ScanMS1
         Dim d As Integer = scans.expression.Length / 25
         Dim p As i32 = 0
 
-        If Not mesh Is Nothing Then
-            sampleinfo = mesh.sampleinfo.ToDictionary(Function(s) s.ID)
-        End If
+        If Not mesh Is Nothing AndAlso mesh.sample_groups.Length > 1 Then
+            Dim sampleinfo As Dictionary(Of String, (SampleInfo(), DataFrameRow())) = mesh.sampleinfo _
+                .Zip(scans.expression()) _
+                .GroupBy(Function(si) si.First.ID) _
+                .ToDictionary(Function(si) si.Key,
+                              Function(s)
+                                  Dim pie = s.Select(Function(si) si.First).ToArray
+                                  Dim conv = s.Select(Function(si) si.Second).ToArray
 
-        For Each sample As DataFrameRow In scans.expression
-            t += dt
-            current = sample.PopulateMs1Scan(t, q, spatial, mz, sampleinfo)
+                                  Return (pie, conv)
+                              End Function)
 
-            If Not current Is Nothing Then
-                Call scan1.Add(current)
-            End If
-            If (++p Mod d) = 0 Then
-                If scan1.Count > 0 Then
-                    Call VBDebugger.EchoLine($"[{p}/{scans.expression.Length}] {(p / scans.expression.Length * 100).ToString("F2")}% ... {scan1.Last.scan_id}")
+            mz = mz.Shuffles.AsVector
+
+            ' processing mutliple layer sample data
+            For Each sample In sampleinfo
+                t += dt
+                current = MsData.PopulateMs1Scan(sample.Key, t, q, mz, sample.Value.Item1, sample.Value.Item2)
+
+                If Not current Is Nothing Then
+                    Call scan1.Add(current)
                 End If
+                If (++p Mod d) = 0 Then
+                    If scan1.Count > 0 Then
+                        Call VBDebugger.EchoLine($"[{p}/{scans.expression.Length}] {(p / scans.expression.Length * 100).ToString("F2")}% ... {scan1.Last.scan_id}")
+                    End If
+                End If
+            Next
+        Else
+            Dim empty As New Dictionary(Of String, SampleInfo)
+
+            If Not mesh Is Nothing Then
+                empty = mesh.sampleinfo.ToDictionary(Function(i) i.ID)
             End If
-        Next
+
+            ' processing simple sample data
+            For Each sample As DataFrameRow In scans.expression
+                t += dt
+                current = sample.PopulateMs1Scan(t, q, spatial, mz, sampleinfo:=empty)
+
+                If Not current Is Nothing Then
+                    Call scan1.Add(current)
+                End If
+                If (++p Mod d) = 0 Then
+                    If scan1.Count > 0 Then
+                        Call VBDebugger.EchoLine($"[{p}/{scans.expression.Length}] {(p / scans.expression.Length * 100).ToString("F2")}% ... {scan1.Last.scan_id}")
+                    End If
+                End If
+            Next
+        End If
 
         Return New mzPack With {
             .Application = If(
