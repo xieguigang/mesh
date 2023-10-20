@@ -193,7 +193,11 @@ Public Module Rscript
 
         mesh.processTemplateString(template)
         mesh.cals = mesh.cals.JoinIterates(
-            SpatialInfo.Spatial2D(px, py, $"cal-{level}P", Nothing, template)
+            SpatialInfo.Spatial2D(px, py, $"cal-{level}P", Nothing, template) _
+                .Select(Function(si)
+                            si.color = level.ToString
+                            Return si
+                        End Function)
         ) _
         .ToArray
 

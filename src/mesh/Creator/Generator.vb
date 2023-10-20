@@ -65,6 +65,24 @@ Public Class Generator
             Next
         Next
 
+        If Not args.cals.IsNullOrEmpty Then
+            For Each cal_group In args.cals.GroupBy(Function(si) si.sample_info)
+                Call VBDebugger.EchoLine("")
+                Call VBDebugger.EchoLine($" Processing reference group: {cal_group.Key}...")
+                Call VBDebugger.EchoLine($"    -> {cal_group.Count} sample files...")
+                Call VBDebugger.EchoLine("")
+
+                Call sample_info.Add((cal_group.Key, cal_group.ToArray))
+
+                Dim maxinto As Double = Val(cal_group.First.color) * args.intensity_max
+
+                For Each v As Vector In CalsMatrix(cal_group.ToArray, maxinto)
+                    v(v.IsNaN) = zero
+                    sample_data.Add(v.ToArray)
+                Next
+            Next
+        End If
+
         'For i As Integer = 0 To ions.Length - 1
         '    Dim ind As Integer = i
         '    Dim v As New Vector(sample_data.Select(Function(r) r(ind)))
@@ -90,6 +108,10 @@ Public Class Generator
 
     Protected Const m_factor As Double = 5.3716
     Protected Const v_factor As Double = m_factor * 0.25
+
+    Protected Overridable Iterator Function CalsMatrix(sample_group As SampleInfo(), maxinto As Double) As IEnumerable(Of Vector)
+        Throw New NotImplementedException
+    End Function
 
     Protected Overridable Iterator Function SampleMatrix(sample_group As SampleInfo()) As IEnumerable(Of Vector)
         ' get mean of each ion feature in current sample_group
