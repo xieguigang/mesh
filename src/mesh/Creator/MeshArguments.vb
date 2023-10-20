@@ -35,6 +35,7 @@ Public Class MeshArguments
     ''' </summary>
     ''' <returns></returns>
     Public Property sampleinfo As SampleInfo()
+    Public Property cals As SampleInfo()
 
     ''' <summary>
     ''' the expression level kernel, the value is corresponding with the <see cref="sampleinfo"/>

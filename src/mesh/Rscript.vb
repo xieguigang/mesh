@@ -180,6 +180,26 @@ Public Module Rscript
         Return template
     End Function
 
+    <ExportAPI("sample.cal_spatial")>
+    Public Function sample_cal_spatial(mesh As MeshArguments,
+                                       <RRawVectorArgument> x As Object,
+                                       <RRawVectorArgument> y As Object,
+                                       level As Double,
+                                       Optional template As String = "[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]",
+                                       Optional env As Environment = Nothing) As Object
+
+        Dim px As Integer() = CLRVector.asInteger(x)
+        Dim py As Integer() = CLRVector.asInteger(y)
+
+        mesh.processTemplateString(template)
+        mesh.cals = mesh.cals.JoinIterates(
+            SpatialInfo.Spatial2D(px, py, $"cal-{level}P", Nothing, template)
+        ) _
+        .ToArray
+
+        Return mesh
+    End Function
+
     ''' <summary>
     ''' Create a spatial sample via the given raster matrix
     ''' </summary>
