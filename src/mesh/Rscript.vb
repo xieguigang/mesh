@@ -180,6 +180,30 @@ Public Module Rscript
         Return template
     End Function
 
+    <ExportAPI("sample.cal_spatial")>
+    Public Function sample_cal_spatial(mesh As MeshArguments,
+                                       <RRawVectorArgument> x As Object,
+                                       <RRawVectorArgument> y As Object,
+                                       level As Double,
+                                       Optional template As String = "[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]",
+                                       Optional env As Environment = Nothing) As Object
+
+        Dim px As Integer() = CLRVector.asInteger(x)
+        Dim py As Integer() = CLRVector.asInteger(y)
+
+        mesh.processTemplateString(template)
+        mesh.cals = mesh.cals.JoinIterates(
+            SpatialInfo.Spatial2D(px, py, $"cal-{level}P", Nothing, template) _
+                .Select(Function(si)
+                            si.color = level.ToString
+                            Return si
+                        End Function)
+        ) _
+        .ToArray
+
+        Return mesh
+    End Function
+
     ''' <summary>
     ''' Create a spatial sample via the given raster matrix
     ''' </summary>
@@ -359,8 +383,9 @@ Public Module Rscript
         Dim d As Integer = scans.expression.Length / 25
         Dim p As i32 = 0
 
-        If Not mesh Is Nothing AndAlso mesh.sample_groups.Length > 1 Then
-            Dim sampleinfo As Dictionary(Of String, (SampleInfo(), DataFrameRow())) = mesh.sampleinfo _
+        If Not mesh Is Nothing AndAlso (mesh.sample_groups.Length > 1 OrElse Not mesh.cals.IsNullOrEmpty) Then
+            Dim infoSource = mesh.sampleinfo.JoinIterates(mesh.cals).ToArray
+            Dim sampleinfo As Dictionary(Of String, (SampleInfo(), DataFrameRow())) = infoSource _
                 .Zip(scans.expression()) _
                 .GroupBy(Function(si) si.First.ID) _
                 .ToDictionary(Function(si) si.Key,
@@ -374,7 +399,7 @@ Public Module Rscript
             mz = mz.Shuffles.AsVector
 
             ' processing mutliple layer sample data
-            For Each sample In sampleinfo
+            For Each sample In sampleinfo ' .OrderByDescending(Function(si) si.Value.Item2.Length)
                 t += dt
                 current = MsData.PopulateMs1Scan(sample.Key, t, q, mz, sample.Value.Item1, sample.Value.Item2)
 

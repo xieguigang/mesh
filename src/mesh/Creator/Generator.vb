@@ -35,19 +35,23 @@ Public Class Generator
     ''' 
     <MethodImpl(MethodImplOptions.AggressiveInlining)>
     Public Function GetExpressionMatrix() As Matrix
+        Dim sample_info As New List(Of String)
+        Dim expr_mat As DataFrameRow() = GetIonExpressions(sample_info).ToArray
+
         Return New Matrix With {
-            .sampleID = sample_groups _
-                .Select(Function(group) group.Value.Select(Function(sample) sample.ID)) _
-                .IteratesALL _
-                .ToArray,
+            .sampleID = sample_info.ToArray,
             .tag = "mesh_generator",
-            .expression = GetIonExpressions.ToArray
+            .expression = expr_mat
         }
     End Function
 
-    Private Iterator Function GetIonExpressions() As IEnumerable(Of DataFrameRow)
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="sample_info">pull the sample id list from this populator function</param>
+    ''' <returns></returns>
+    Private Iterator Function GetIonExpressions(sample_info As List(Of String)) As IEnumerable(Of DataFrameRow)
         Dim ions As Double() = Me.ions.Clear().CreateIonFeatures().Shuffles.ToArray
-        Dim sample_info As New List(Of (name As String, SampleInfo()))
         Dim sample_data As New List(Of Double())
         Dim zero As Vector = Vector.Zero
 
@@ -57,13 +61,32 @@ Public Class Generator
             Call VBDebugger.EchoLine($"    -> {sample_group.Value.Length} sample files...")
             Call VBDebugger.EchoLine("")
 
-            sample_info.Add((sample_group.Key, sample_group.Value))
+            sample_info.AddRange(sample_group.Value.Select(Function(sample) sample.ID))
 
             For Each v As Vector In SampleMatrix(sample_group.Value)
                 v(v.IsNaN) = zero
                 sample_data.Add(v.ToArray)
             Next
         Next
+
+        If Not args.cals.IsNullOrEmpty Then
+            For Each cal_group In args.cals.GroupBy(Function(si) si.sample_info)
+                Call VBDebugger.EchoLine("")
+                Call VBDebugger.EchoLine($" Processing reference group: {cal_group.Key}...")
+                Call VBDebugger.EchoLine($"    -> {cal_group.Count} sample files...")
+                Call VBDebugger.EchoLine("")
+
+                Call sample_info.AddRange(cal_group.Select(Function(sample) sample.ID))
+
+                Dim level As Double = Val(cal_group.First.color)
+                Dim maxinto As Double = level * args.intensity_max
+
+                For Each v As Vector In CalsMatrix(cal_group.ToArray, maxinto)
+                    v(v.IsNaN) = zero
+                    sample_data.Add(v.ToArray)
+                Next
+            Next
+        End If
 
         'For i As Integer = 0 To ions.Length - 1
         '    Dim ind As Integer = i
@@ -90,6 +113,10 @@ Public Class Generator
 
     Protected Const m_factor As Double = 5.3716
     Protected Const v_factor As Double = m_factor * 0.25
+
+    Protected Overridable Iterator Function CalsMatrix(sample_group As SampleInfo(), maxinto As Double) As IEnumerable(Of Vector)
+        Throw New NotImplementedException
+    End Function
 
     Protected Overridable Iterator Function SampleMatrix(sample_group As SampleInfo()) As IEnumerable(Of Vector)
         ' get mean of each ion feature in current sample_group

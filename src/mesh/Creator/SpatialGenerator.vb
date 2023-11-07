@@ -38,6 +38,15 @@ Public Class SpatialGenerator : Inherits Generator
         End If
     End Function
 
+    Protected Overrides Iterator Function CalsMatrix(sample_group() As SampleInfo, maxinto As Double) As IEnumerable(Of Vector)
+        ' use gauss kernel
+        For Each spot As SampleInfo In sample_group
+            Dim gauss = Vector.rand(0.75, 0.99, args.featureSize)
+            gauss = gauss * maxinto
+            Yield gauss
+        Next
+    End Function
+
     Protected Overrides Iterator Function SampleMatrix(sample_group() As SampleInfo) As IEnumerable(Of Vector)
         Dim kernel As New Vector(sample_group.Select(Function(s) Val(s.color)))
         Dim zero As Vector = Vector.Zero()
