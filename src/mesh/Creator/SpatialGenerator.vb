@@ -3,6 +3,7 @@ Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Math.Distributions
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
+Imports std = System.Math
 
 Public Class SpatialGenerator : Inherits Generator
 
@@ -46,6 +47,7 @@ Public Class SpatialGenerator : Inherits Generator
         Dim x As New Vector(Enumerable.Range(0, args.featureSize))
         Dim scale_range As New DoubleRange(kernel)
         Dim index_select As New DoubleRange(0, args.featureSize - 1)
+        Dim ionization = x ^ std.E
 
         If d = 0 Then
             d = 1
@@ -63,7 +65,7 @@ Public Class SpatialGenerator : Inherits Generator
             Dim offset As Integer = scale_range.ScaleMapping(scale, index_select)
             Dim mu As Double = x(offset)
             Dim sigma As Double = kernel(CInt(i))
-            Dim sample_data As Vector = pnorm.ProbabilityDensity(x, mu, sigma)
+            Dim sample_data As Vector = pnorm.ProbabilityDensity(x, mu, sigma) * ionization
 
             sample_data += sample_data * Vector.rand(-0.5, 0.5, sample_data.Dim)
 
