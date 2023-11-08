@@ -47,7 +47,10 @@ Public Class SpatialGenerator : Inherits Generator
         ' use gauss kernel
         For Each spot As SampleInfo In sample_group
             Dim gauss = Vector.rand(0.75, 0.99, args.featureSize)
+
             gauss = gauss * maxinto
+            gauss = gauss * ionization
+
             Yield gauss
         Next
     End Function
@@ -60,7 +63,7 @@ Public Class SpatialGenerator : Inherits Generator
         Dim t0 As Date = Now
         Dim scale_range As New DoubleRange(kernel)
         Dim index_select As New DoubleRange(0, args.featureSize - 1)
-        Dim ionization = x ^ std.E
+        Dim x As New Vector(ordinal)
 
         If d = 0 Then
             d = 1
