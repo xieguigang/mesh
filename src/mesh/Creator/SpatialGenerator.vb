@@ -60,6 +60,7 @@ Public Class SpatialGenerator : Inherits Generator
         Dim t0 As Date = Now
         Dim scale_range As New DoubleRange(kernel)
         Dim index_select As New DoubleRange(0, args.featureSize - 1)
+        Dim ionization = x ^ std.E
 
         If d = 0 Then
             d = 1
@@ -77,7 +78,7 @@ Public Class SpatialGenerator : Inherits Generator
             Dim offset As Integer = scale_range.ScaleMapping(scale, index_select)
             Dim mu As Double = x(offset)
             Dim sigma As Double = kernel(CInt(i))
-            Dim sample_data As Vector = pnorm.ProbabilityDensity(x, mu, sigma)
+            Dim sample_data As Vector = pnorm.ProbabilityDensity(x, mu, sigma) * ionization
 
             sample_data += sample_data * Vector.rand(-0.5, 0.5, sample_data.Dim)
 
