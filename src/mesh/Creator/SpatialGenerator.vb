@@ -19,7 +19,7 @@ Public Class SpatialGenerator : Inherits Generator
                           Function(group)
                               Return group.ToArray
                           End Function)
-        Me.ordinal = New Vector(Enumerable.Range(1, args.featureSize + 1))
+        Me.ordinal = New Vector(Enumerable.Range(0, args.featureSize))
         Me.ionization = ordinal ^ std.E
         ' Me.ionization = ionization / ionization.Sum
     End Sub
