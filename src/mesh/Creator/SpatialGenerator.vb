@@ -21,6 +21,7 @@ Public Class SpatialGenerator : Inherits Generator
                           End Function)
         Me.ordinal = New Vector(Enumerable.Range(1, args.featureSize + 1))
         Me.ionization = ordinal ^ std.E
+        ' Me.ionization = ionization / ionization.Sum
     End Sub
 
     ''' <summary>
@@ -64,6 +65,7 @@ Public Class SpatialGenerator : Inherits Generator
         Dim scale_range As New DoubleRange(kernel)
         Dim index_select As New DoubleRange(0, args.featureSize - 1)
         Dim x As New Vector(ordinal)
+        Dim half As Double = args.featureSize / 2
 
         If d = 0 Then
             d = 1
@@ -80,10 +82,10 @@ Public Class SpatialGenerator : Inherits Generator
             Dim scale As Double = Val(spot.color)
             Dim offset As Integer = scale_range.ScaleMapping(scale, index_select)
             Dim mu As Double = x(offset)
-            Dim sigma As Double = kernel(CInt(i))
+            Dim sigma As Double = kernel(CInt(i)) ^ std.E
             Dim sample_data As Vector = pnorm.ProbabilityDensity(x, mu, sigma) * ionization
 
-            sample_data += sample_data * Vector.rand(-0.5, 0.5, sample_data.Dim)
+            sample_data += sample_data * Vector.rand(-0.5, 0.5, half)
 
             If ++i Mod d = 0 Then
                 Call VBDebugger.EchoLine($"  * [{((i / sample_group.Length) * 100).ToString("F2")}%, {(Now - t0).FormatTime}] {spot.sample_name}...")
