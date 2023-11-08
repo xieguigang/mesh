@@ -3,8 +3,12 @@ Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Math.Distributions
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
+Imports std = System.Math
 
 Public Class SpatialGenerator : Inherits Generator
+
+    ReadOnly ordinal As Vector
+    ReadOnly ionization As Vector
 
     Sub New(args As MeshArguments)
         Call MyBase.New(args)
@@ -15,6 +19,8 @@ Public Class SpatialGenerator : Inherits Generator
                           Function(group)
                               Return group.ToArray
                           End Function)
+        Me.ordinal = New Vector(Enumerable.Range(1, args.featureSize + 1))
+        Me.ionization = ordinal ^ std.E
     End Sub
 
     ''' <summary>
@@ -52,7 +58,6 @@ Public Class SpatialGenerator : Inherits Generator
         Dim d As Integer = sample_group.Length / 20
         Dim i As i32 = 0
         Dim t0 As Date = Now
-        Dim x As New Vector(Enumerable.Range(0, args.featureSize))
         Dim scale_range As New DoubleRange(kernel)
         Dim index_select As New DoubleRange(0, args.featureSize - 1)
 
