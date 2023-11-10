@@ -7,6 +7,9 @@ Imports std = System.Math
 
 Public Class SpatialGenerator : Inherits Generator
 
+    ReadOnly ordinal As Vector
+    ReadOnly ionization As Vector
+
     Sub New(args As MeshArguments)
         Call MyBase.New(args)
 
@@ -16,6 +19,9 @@ Public Class SpatialGenerator : Inherits Generator
                           Function(group)
                               Return group.ToArray
                           End Function)
+        Me.ordinal = New Vector(Enumerable.Range(0, args.featureSize))
+        Me.ionization = ordinal ^ std.E
+        ' Me.ionization = ionization / ionization.Sum
     End Sub
 
     ''' <summary>
@@ -42,7 +48,10 @@ Public Class SpatialGenerator : Inherits Generator
         ' use gauss kernel
         For Each spot As SampleInfo In sample_group
             Dim gauss = Vector.rand(0.75, 0.99, args.featureSize)
+
             gauss = gauss * maxinto
+            gauss = gauss * ionization
+
             Yield gauss
         Next
     End Function
@@ -53,10 +62,9 @@ Public Class SpatialGenerator : Inherits Generator
         Dim d As Integer = sample_group.Length / 20
         Dim i As i32 = 0
         Dim t0 As Date = Now
-        Dim x As New Vector(Enumerable.Range(0, args.featureSize))
         Dim scale_range As New DoubleRange(kernel)
         Dim index_select As New DoubleRange(0, args.featureSize - 1)
-        Dim ionization = x ^ std.E
+        Dim x As New Vector(ordinal)
 
         If d = 0 Then
             d = 1
@@ -73,10 +81,10 @@ Public Class SpatialGenerator : Inherits Generator
             Dim scale As Double = Val(spot.color)
             Dim offset As Integer = scale_range.ScaleMapping(scale, index_select)
             Dim mu As Double = x(offset)
-            Dim sigma As Double = kernel(CInt(i))
+            Dim sigma As Double = kernel(CInt(i)) ^ std.E
             Dim sample_data As Vector = pnorm.ProbabilityDensity(x, mu, sigma) * ionization
 
-            sample_data += sample_data * Vector.rand(-0.5, 0.5, sample_data.Dim)
+            sample_data += sample_data * Vector.rand(-0.25, 0.25, args.featureSize)
 
             If ++i Mod d = 0 Then
                 Call VBDebugger.EchoLine($"  * [{((i / sample_group.Length) * 100).ToString("F2")}%, {(Now - t0).FormatTime}] {spot.sample_name}...")
