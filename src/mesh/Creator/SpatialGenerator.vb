@@ -1,5 +1,6 @@
 ﻿Imports Microsoft.VisualBasic.ComponentModel.Ranges.Model
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.Distributions
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
@@ -45,10 +46,22 @@ Public Class SpatialGenerator : Inherits Generator
     End Function
 
     Protected Overrides Iterator Function CalsMatrix(sample_group() As SampleInfo, maxinto As Double) As IEnumerable(Of Vector)
+        Dim gauss As Vector
+        Dim spot_index As Dictionary(Of String, SampleInfo) = sample_groups.Values _
+            .IteratesALL _
+            .ToDictionary(Function(s)
+                              Return s.ID
+                          End Function)
+
         ' use gauss kernel
         For Each spot As SampleInfo In sample_group
-            Dim gauss = Vector.rand(0.75, 0.99, args.featureSize)
+            Dim kernel As Double = If(spot_index.ContainsKey(spot.ID), Val(spot_index(spot.ID).color), 0.0)
 
+            If kernel <= 0.0 Then
+                Continue For
+            End If
+
+            gauss = Vector.rand(0.8, 0.99, args.featureSize)
             gauss = gauss * maxinto
             gauss = gauss * ionization
 
