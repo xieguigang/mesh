@@ -86,11 +86,13 @@ declare namespace mesh {
      * + default value Is ``["[M+H]+","[M+Na]+","[M+K]+","[M+NH4]+","[M+H2O+H]+","[M-H2O+H]+"]``.
      * @param intensity_max 
      * + default value Is ``100000``.
+     * @param source_tag 
+     * + default value Is ``'mesh_generator'``.
      * @param env -
      * 
      * + default value Is ``null``.
    */
-   function mesh(mass_range?: any, features?: any, mzdiff?: number, adducts?: any, intensity_max?: number, env?: object): object;
+   function mesh(mass_range?: any, features?: any, mzdiff?: number, adducts?: any, intensity_max?: number, source_tag?: string, env?: object): object;
    /**
     * Set metabolite features
     * 
@@ -117,10 +119,9 @@ declare namespace mesh {
    module sample {
       /**
         * @param template default value Is ``'[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]'``.
-        * @param factor default value Is ``0.0031666666666666666``.
         * @param env default value Is ``null``.
       */
-      function cal_spatial(mesh: object, x: any, y: any, level: number, template?: string, factor?: number, env?: object): any;
+      function cal_spatial(mesh: object, x: any, y: any, level: number, template?: string, env?: object): any;
    }
    module samples {
       /**
