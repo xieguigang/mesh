@@ -211,12 +211,13 @@ Public Module Rscript
 
         Dim px As Integer() = CLRVector.asInteger(x)
         Dim py As Integer() = CLRVector.asInteger(y)
+        Dim factor As String = (level * 0.5).ToString
 
         mesh.processTemplateString(template)
         mesh.cals = mesh.cals.JoinIterates(
             SpatialInfo.Spatial2D(px, py, $"cal-{level}P", Nothing, template) _
                 .Select(Function(si)
-                            si.color = level.ToString
+                            si.color = factor
                             Return si
                         End Function)
         ) _
