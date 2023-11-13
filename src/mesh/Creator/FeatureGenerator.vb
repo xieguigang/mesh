@@ -73,6 +73,10 @@ Public Class FeatureGenerator : Implements Enumeration(Of Double)
                 features -= 1
                 Yield ion
             End If
+
+            If features <= 0 Then
+                Exit For
+            End If
         Next
 
         Do While features > 0
