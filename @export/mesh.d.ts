@@ -49,6 +49,13 @@ declare namespace mesh {
    */
    function expr1(mesh: object, mzpack?: boolean, q?: number, spatial?: boolean): object|object;
    /**
+    * Get the ion feature set based on the configed mesh argument
+    * 
+    * 
+     * @param mesh -
+   */
+   function featureSet(mesh: object): number;
+   /**
      * @param C default value Is ``[1,9]``.
      * @param H default value Is ``[0,60]``.
      * @param O default value Is ``[0,18]``.
@@ -68,7 +75,9 @@ declare namespace mesh {
      * @param mass_range -
      * 
      * + default value Is ``[50,1200]``.
-     * @param feature_size -
+     * @param features set the number of the ion features in the generated dataset, 
+     *  andalso you could set the ion set manually from this 
+     *  parameter.
      * 
      * + default value Is ``10000``.
      * @param mzdiff 
@@ -81,7 +90,7 @@ declare namespace mesh {
      * 
      * + default value Is ``null``.
    */
-   function mesh(mass_range?: any, feature_size?: object, mzdiff?: number, adducts?: any, intensity_max?: number, env?: object): object;
+   function mesh(mass_range?: any, features?: any, mzdiff?: number, adducts?: any, intensity_max?: number, env?: object): object;
    /**
     * Set metabolite features
     * 
@@ -105,6 +114,13 @@ declare namespace mesh {
      * + default value Is ``null``.
    */
    function metabolites(mesh: object, metabolites: any, adducts?: any, env?: object): object;
+   module sample {
+      /**
+        * @param template default value Is ``'[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]'``.
+        * @param env default value Is ``null``.
+      */
+      function cal_spatial(mesh: object, x: any, y: any, level: number, template?: string, env?: object): any;
+   }
    module samples {
       /**
        * Create a spatial sample via the given raster matrix

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Create a mesh argument for run metabolomics expression matrix simulation</title>
+    <title>Get the ion feature set based on the configed mesh argument</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <style rel="stylesheet" type="text/css">
@@ -148,12 +148,12 @@
 
         <table style="width: 100%;">
             <tr>
-                <td>mesh {mesh}</td>
+                <td>featureSet {mesh}</td>
                 <td style="text-align: right;">R Documentation</td>
             </tr>
         </table>
 
-        <h2>Create a mesh argument for run metabolomics expression matrix simulation</h2>
+        <h2>Get the ion feature set based on the configed mesh argument</h2>
 
         <h3>Description</h3>
 
@@ -162,29 +162,14 @@
         <h3>Usage</h3>
 
         <div style="width: 100%; padding-left: 3%; color: black;">
-            <pre><code class='language-R' style="color: black; font-weight:normal;"><strong>mesh</strong>(
-    <i>mass.range</i> = [50,1200],
-    <i>features</i> = <span style='color: green;'>10000</span>,
-    <i>mzdiff</i> = <span style='color: green;'>0.005</span>,
-    <i>adducts</i> = ["[M+H]+","[M+Na]+","[M+K]+","[M+NH4]+","[M+H2O+H]+","[M-H2O+H]+"],
-    <i>intensity.max</i> = <span style='color: green;'>100000</span>);</code></pre>
+            <pre><code class='language-R' style="color: black; font-weight:normal;"><strong>featureSet</strong>(<i>mesh</i>);</code></pre>
         </div>
 
         <h3>Arguments</h3>
 
         <table>
             
-<dt>mass.range</dt>
-<dd><p><p>-</p></p></dd>
-
-
-<dt>features</dt>
-<dd><p><p>set the number of the ion features in the generated dataset, <br />
- andalso you could set the ion set manually from this <br />
- parameter.</p></p></dd>
-
-
-<dt>env</dt>
+<dt>mesh</dt>
 <dd><p><p>-</p></p></dd>
 
         </table>
@@ -197,7 +182,7 @@
 
         <h3>Value</h3>
 
-        this function returns data object of type <a href="/clr/mesh/MeshArguments.html">MeshArguments</a>.
+        this function returns data object of type double.
 
         <h3 style="display: none;">Examples</h3>
 
