@@ -1,0 +1,20 @@
+﻿.TH PULL_KEGG 1 2023-Nov "" "A helper function for create kegg compound ion features"
+.SH NAME
+pull_kegg \- pull_kegg(dbfile,
+    <i>category</i> = /Metabolism/Energy metabolism/)
+.SH SYNOPSIS
+\fIpull_kegg(dbfile,
+    <i>category</i> = /Metabolism/Energy metabolism/)\fR
+.SH OPTIONS
+.PP
+\fBdbfile\fB \fR\- . a file path to the HDS package database file, example as: ``/GCModeller/src/repository/graphquery/kegg/tools/cache.db``.
+.PP
+.PP
+\fBcategory\fB \fR\- /Metabolism/Energy metabolism/. the kegg pathway category name for get the kegg compound list. This pathway category name must be end with a directory seperator symbol ``/``.
+.PP
+.SH FILES
+.PP
+SMRUCC/R#.declare_function.pull_kegg at kegg.R:line 9
+.PP
+.SH COPYRIGHT
+Copyright © xieguigang <xie.guigang@gcmodeller.org>, MIT Licensed 2023

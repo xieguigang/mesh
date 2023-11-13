@@ -11,7 +11,7 @@ imports "dataset" from "MLkit";
 
 setwd(@dir);
 
-
+const compounds = mesh::pull_kegg("/GCModeller/src/repository/graphquery/kegg/tools/cache.db");
 # str(compounds);
 
 # stop();
