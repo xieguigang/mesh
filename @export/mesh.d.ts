@@ -105,13 +105,6 @@ declare namespace mesh {
      * + default value Is ``null``.
    */
    function metabolites(mesh: object, metabolites: any, adducts?: any, env?: object): object;
-   module sample {
-      /**
-        * @param template default value Is ``'[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]'``.
-        * @param env default value Is ``null``.
-      */
-      function cal_spatial(mesh: object, x: any, y: any, level: number, template?: string, env?: object): any;
-   }
    module samples {
       /**
        * Create a spatial sample via the given raster matrix
