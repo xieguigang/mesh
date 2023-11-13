@@ -17,6 +17,8 @@ Public Class Generator
 
     Protected sample_groups As Dictionary(Of String, SampleInfo())
 
+    Public Const source_tag As String = "mesh_generator"
+
     Sub New(args As MeshArguments)
         Me.args = args
         Me.ions = New FeatureGenerator(args)
@@ -40,7 +42,11 @@ Public Class Generator
 
         Return New Matrix With {
             .sampleID = sample_info.ToArray,
-            .tag = "mesh_generator",
+            .tag = If(
+                args.source_tag.StringEmpty,
+                source_tag,
+                args.source_tag
+            ),
             .expression = expr_mat
         }
     End Function

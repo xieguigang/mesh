@@ -48,6 +48,7 @@ Public Module Rscript
                              <RRawVectorArgument(GetType(String))>
                              Optional adducts As Object = "[M+H]+|[M+Na]+|[M+K]+|[M+NH4]+|[M+H2O+H]+|[M-H2O+H]+",
                              Optional intensity_max As Double = 100000.0,
+                             Optional source_tag As String = Generator.source_tag,
                              Optional env As Environment = Nothing) As MeshArguments
 
         Dim range As Double() = CLRVector.asNumeric(mass_range)
@@ -61,7 +62,8 @@ Public Module Rscript
             .intensity_max = intensity_max,
             .adducts = precursors,
             .opts = SearchOption.SmallMolecule(DNPOrWileyType.Wiley, True),
-            .ionSet = If(ionSet.Length > 1, ionSet, Nothing)
+            .ionSet = If(ionSet.Length > 1, ionSet, Nothing),
+            .source_tag = source_tag
         }
     End Function
 
