@@ -57,10 +57,11 @@ Public Class SpatialGenerator : Inherits Generator
         For Each spot As SampleInfo In sample_group
             Dim kernel As Double = If(spot_index.ContainsKey(spot.ID), Val(spot_index(spot.ID).color), 0.0)
 
+            ' skip of the missing spot
             If kernel <= 0.0 Then
                 Yield Vector.Zero([Dim]:=args.featureSize)
             Else
-                gauss = Vector.rand(0.8, 0.99, args.featureSize)
+                gauss = Vector.rand(0.6, 0.99, args.featureSize)
                 gauss = gauss * maxinto
                 gauss = gauss * ionization
 

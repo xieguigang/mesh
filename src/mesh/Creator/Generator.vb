@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.Imaging.Drawing2D.Colors.Scaler
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.Distributions
@@ -82,10 +83,10 @@ Public Class Generator
         Next
 
         If Not args.cals.IsNullOrEmpty Then
-            Dim intensity_max As Double = Aggregate row As Double()
-                                          In sample_data.AsParallel
-                                          Let maxi As Double = row.Max
-                                          Into Max(maxi)
+            Dim intensity_max As Double = (From row As Double()
+                                           In sample_data.AsParallel
+                                           Let maxi As Double = row.Average
+                                           Select maxi).Average / 10000000
 
             For Each cal_group In args.cals.GroupBy(Function(si) si.sample_info)
                 Call VBDebugger.EchoLine("")
