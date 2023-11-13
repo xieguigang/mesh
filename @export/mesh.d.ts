@@ -117,9 +117,10 @@ declare namespace mesh {
    module sample {
       /**
         * @param template default value Is ``'[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]'``.
+        * @param factor default value Is ``0.0031666666666666666``.
         * @param env default value Is ``null``.
       */
-      function cal_spatial(mesh: object, x: any, y: any, level: number, template?: string, env?: object): any;
+      function cal_spatial(mesh: object, x: any, y: any, level: number, template?: string, factor?: number, env?: object): any;
    }
    module samples {
       /**

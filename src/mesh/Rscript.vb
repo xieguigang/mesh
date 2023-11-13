@@ -207,17 +207,18 @@ Public Module Rscript
                                        <RRawVectorArgument> y As Object,
                                        level As Double,
                                        Optional template As String = "[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]",
+                                       Optional factor As Double = 0.0095 / 3,
                                        Optional env As Environment = Nothing) As Object
 
         Dim px As Integer() = CLRVector.asInteger(x)
         Dim py As Integer() = CLRVector.asInteger(y)
-        Dim factor As String = (level * 0.0095).ToString
+        Dim level_factor As String = (level * factor).ToString
 
         mesh.processTemplateString(template)
         mesh.cals = mesh.cals.JoinIterates(
             SpatialInfo.Spatial2D(px, py, $"cal-{level}P", Nothing, template) _
                 .Select(Function(si)
-                            si.color = factor
+                            si.color = level_factor
                             Return si
                         End Function)
         ) _
