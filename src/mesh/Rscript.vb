@@ -65,6 +65,20 @@ Public Module Rscript
         }
     End Function
 
+    ''' <summary>
+    ''' Get the ion feature set based on the configed mesh argument
+    ''' </summary>
+    ''' <param name="mesh"></param>
+    ''' <returns></returns>
+    <ExportAPI("featureSet")>
+    Public Function featureSet(mesh As MeshArguments) As Double()
+        Return New FeatureGenerator(mesh) _
+            .Clear() _
+            .CreateIonFeatures() _
+            .Shuffles _
+            .ToArray
+    End Function
+
     <ExportAPI("formula")>
     Public Function formulaGenerator(mesh As MeshArguments,
                                      <RRawVectorArgument(GetType(Double))> Optional C As Object = "1,9",
