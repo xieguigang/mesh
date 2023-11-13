@@ -67,7 +67,7 @@ Module MsData
         Dim mzi = mz(i)
         Dim into = expression(i)
 
-        If mzi.Length = 0 Then
+        If mzi.Length = 0 OrElse into.All(Function(it) it <= 0.0) Then
             Return Nothing
         Else
             Dim totalIons = into.Sum.ToString("G3")

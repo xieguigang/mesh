@@ -58,14 +58,14 @@ Public Class SpatialGenerator : Inherits Generator
             Dim kernel As Double = If(spot_index.ContainsKey(spot.ID), Val(spot_index(spot.ID).color), 0.0)
 
             If kernel <= 0.0 Then
-                Continue For
+                Yield Vector.Zero([Dim]:=args.featureSize)
+            Else
+                gauss = Vector.rand(0.8, 0.99, args.featureSize)
+                gauss = gauss * maxinto
+                gauss = gauss * ionization
+
+                Yield gauss
             End If
-
-            gauss = Vector.rand(0.8, 0.99, args.featureSize)
-            gauss = gauss * maxinto
-            gauss = gauss * ionization
-
-            Yield gauss
         Next
     End Function
 
