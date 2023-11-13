@@ -207,12 +207,11 @@ Public Module Rscript
                                        <RRawVectorArgument> y As Object,
                                        level As Double,
                                        Optional template As String = "[raster-%y.raw][Scan_%d][%x,%y] FTMS + p NSI Full ms [%min-%max]",
-                                       Optional factor As Double = 0.0095 / 3,
                                        Optional env As Environment = Nothing) As Object
 
         Dim px As Integer() = CLRVector.asInteger(x)
         Dim py As Integer() = CLRVector.asInteger(y)
-        Dim level_factor As String = (level * factor).ToString
+        Dim level_factor As String = level.ToString
 
         mesh.processTemplateString(template)
         mesh.cals = mesh.cals.JoinIterates(

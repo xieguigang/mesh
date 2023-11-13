@@ -76,6 +76,11 @@ Public Class Generator
         Next
 
         If Not args.cals.IsNullOrEmpty Then
+            Dim intensity_max As Double = Aggregate row As Double()
+                                          In sample_data.AsParallel
+                                          Let maxi As Double = row.Max
+                                          Into Max(maxi)
+
             For Each cal_group In args.cals.GroupBy(Function(si) si.sample_info)
                 Call VBDebugger.EchoLine("")
                 Call VBDebugger.EchoLine($" Processing reference group: {cal_group.Key}...")
@@ -85,7 +90,7 @@ Public Class Generator
                 Call sample_info.AddRange(cal_group.Select(Function(sample) sample.ID))
 
                 Dim level As Double = Val(cal_group.First.color)
-                Dim maxinto As Double = level * args.intensity_max
+                Dim maxinto As Double = level * intensity_max
 
                 For Each v As Vector In CalsMatrix(cal_group.ToArray, maxinto)
                     v(v.IsNaN) = zero
