@@ -51,9 +51,15 @@ Public Class Generator
     ''' <param name="sample_info">pull the sample id list from this populator function</param>
     ''' <returns></returns>
     Private Iterator Function GetIonExpressions(sample_info As List(Of String)) As IEnumerable(Of DataFrameRow)
-        Dim ions As Double() = Me.ions.Clear().CreateIonFeatures().Shuffles.ToArray
+        Dim ions As Double()
         Dim sample_data As New List(Of Double())
         Dim zero As Vector = Vector.Zero
+
+        If args.ionSet.IsNullOrEmpty Then
+            ions = Me.ions.Clear().CreateIonFeatures().Shuffles.ToArray
+        Else
+            ions = args.ionSet
+        End If
 
         For Each sample_group In sample_groups
             Call VBDebugger.EchoLine("")

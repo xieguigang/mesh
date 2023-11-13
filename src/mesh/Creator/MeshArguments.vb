@@ -47,6 +47,12 @@ Public Class MeshArguments
     ''' </summary>
     ''' <returns></returns>
     Public Property featureSize As Integer = 10000
+    ''' <summary>
+    ''' the manual configed ion feature set, this config value will 
+    ''' overrides the internal feature generator module
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property ionSet As Double()
 
     ''' <summary>
     ''' the metabolites that appears in the ions feature, 

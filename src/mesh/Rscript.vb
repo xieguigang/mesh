@@ -31,14 +31,19 @@ Public Module Rscript
     ''' Create a mesh argument for run metabolomics expression matrix simulation
     ''' </summary>
     ''' <param name="mass_range"></param>
-    ''' <param name="feature_size"></param>
+    ''' <param name="features">
+    ''' set the number of the ion features in the generated dataset, 
+    ''' andalso you could set the ion set manually from this 
+    ''' parameter.
+    ''' </param>
     ''' <param name="env"></param>
     ''' <returns></returns>
     <ExportAPI("mesh")>
     <RApiReturn(GetType(MeshArguments))>
     Public Function meshArgs(<RRawVectorArgument(GetType(Double))>
                              Optional mass_range As Object = "50,1200",
-                             Optional feature_size As Integer = 10000,
+                             <RRawVectorArgument>
+                             Optional features As Object = 10000,
                              Optional mzdiff As Double = 0.005,
                              <RRawVectorArgument(GetType(String))>
                              Optional adducts As Object = "[M+H]+|[M+Na]+|[M+K]+|[M+NH4]+|[M+H2O+H]+|[M-H2O+H]+",
@@ -47,14 +52,16 @@ Public Module Rscript
 
         Dim range As Double() = CLRVector.asNumeric(mass_range)
         Dim precursors As MzCalculator() = Math.GetPrecursorTypes(adducts, env)
+        Dim ionSet As Double() = CLRVector.asNumeric(features)
 
         Return New MeshArguments With {
             .mass_range = range,
-            .featureSize = feature_size,
+            .featureSize = If(ionSet.Length > 1, ionSet.Length, CInt(ionSet(Scan0))),
             .massdiff = mzdiff,
             .intensity_max = intensity_max,
             .adducts = precursors,
-            .opts = SearchOption.SmallMolecule(DNPOrWileyType.Wiley, True)
+            .opts = SearchOption.SmallMolecule(DNPOrWileyType.Wiley, True),
+            .ionSet = If(ionSet.Length > 1, ionSet, Nothing)
         }
     End Function
 
