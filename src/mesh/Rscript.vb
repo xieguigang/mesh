@@ -211,7 +211,7 @@ Public Module Rscript
 
         Dim px As Integer() = CLRVector.asInteger(x)
         Dim py As Integer() = CLRVector.asInteger(y)
-        Dim factor As String = (level * 0.5).ToString
+        Dim factor As String = (level * 0.0095).ToString
 
         mesh.processTemplateString(template)
         mesh.cals = mesh.cals.JoinIterates(
