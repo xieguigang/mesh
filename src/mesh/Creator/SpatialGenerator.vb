@@ -2,6 +2,7 @@
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.Distributions
+Imports Microsoft.VisualBasic.Math.Distributions.MathGamma
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports SMRUCC.genomics.GCModeller.Workbench.ExperimentDesigner
 Imports std = System.Math
@@ -21,7 +22,7 @@ Public Class SpatialGenerator : Inherits Generator
                               Return group.ToArray
                           End Function)
         Me.ordinal = New Vector(Enumerable.Range(0, args.featureSize))
-        Me.ionization = ordinal ^ std.E
+        Me.ionization = gamma(1 + ordinal ^ (1 / 3))
         ' Me.ionization = ionization / ionization.Sum
     End Sub
 
