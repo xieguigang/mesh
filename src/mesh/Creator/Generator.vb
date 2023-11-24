@@ -86,7 +86,7 @@ Public Class Generator
             Dim intensity_max As Double = (From row As Double()
                                            In sample_data.AsParallel
                                            Let maxi As Double = row.Average
-                                           Select maxi).Average / 10000000
+                                           Select maxi).Average / 10000
 
             For Each cal_group In args.cals.GroupBy(Function(si) si.sample_info)
                 Call VBDebugger.EchoLine("")
