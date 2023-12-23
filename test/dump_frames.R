@@ -25,6 +25,8 @@ let res = [ 528, 320 ];
 print(imgs);
 str(metadata);
 
+CNN::n_threads(32);
+
 for(path in imgs) {
     let raster = as.data.frame(as.raster(readImage(path))); 
     raster = raster[raster$scale > 0, ];
@@ -44,7 +46,7 @@ for(path in imgs) {
     str(spectrum_data);
 
     let msi_data = t(spectrum_data);
-     msi_data = MSI::scale(msi_data, total);
+     msi_data = MSI::scale(msi_data, total, bpc = TRUE);
     msi_data = t(msi_data);
     let save_export = `${dirname(path)}/${basename(path)}.mzPack`;
 
