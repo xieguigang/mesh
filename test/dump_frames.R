@@ -48,7 +48,7 @@ for(path in imgs) {
     let msi_data = t(spectrum_data);
      msi_data = MSI::scale(msi_data, total, bpc = TRUE);
         msi_data = MSI::levels.convolution(msi_data, 
-            win_size = 3, clusters = 9);
+            win_size = 6, clusters = 9);
     msi_data = t(msi_data);
     let save_export = `${dirname(path)}/${basename(path)}.imzML`;
 
