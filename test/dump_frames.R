@@ -24,7 +24,7 @@ let res = [ 528, 320 ];
 
 print(imgs);
 str(metadata);
-
+imgs =["F:\\AtlasSlices\\071.jpg"];
 CNN::n_threads(32);
 
 for(path in imgs) {
@@ -47,12 +47,14 @@ for(path in imgs) {
 
     let msi_data = t(spectrum_data);
      msi_data = MSI::scale(msi_data, total, bpc = TRUE);
+        msi_data = MSI::levels.convolution(msi_data, 
+            win_size = 3, clusters = 9);
     msi_data = t(msi_data);
-    let save_export = `${dirname(path)}/${basename(path)}.mzPack`;
+    let save_export = `${dirname(path)}/${basename(path)}.imzML`;
 
-    let rawdata = MSI::pack_matrix(file = msi_data, res);
+    let rawdata = MSI::pack_matrix(file = msi_data, res, source.tag = `AtlasSlices_${basename(path)}`);
 
-    write.mzPack(rawdata, file = save_export);
+    write.imzML(rawdata, file = save_export, res = 30);
 
    # stop();
 }
