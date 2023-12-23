@@ -52,6 +52,6 @@ for(path in imgs) {
 
     write.mzPack(rawdata, file = save_export);
 
-    stop();
+   # stop();
 }
 
