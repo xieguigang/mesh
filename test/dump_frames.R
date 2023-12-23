@@ -3,7 +3,7 @@ imports "dataset" from "MLkit";
 require(JSON);
 require(CNN);
 
-setwd(@dir);
+setwd("F:/");
 
 let dataset = read.sample_set(file = "./spectrum.dat");
 dataset = sort_samples(dataset, order_id = 5, desc = TRUE);
