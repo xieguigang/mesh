@@ -24,7 +24,7 @@ let res = [ 528, 320 ];
 
 print(imgs);
 str(metadata);
-imgs =["F:\\AtlasSlices\\071.jpg"];
+
 CNN::n_threads(32);
 
 for(path in imgs) {
